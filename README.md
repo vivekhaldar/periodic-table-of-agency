@@ -2,6 +2,8 @@
 
 An interactive field guide to the atomic operators behind agentic systems—and the bonds, functional groups, compounds, and complexes they form.
 
+Live site: [agentatoms.dev](https://agentatoms.dev)
+
 The project uses the periodic table as a compositional metaphor. It is not claiming a physical periodic law for agent engineering.
 
 ## Current field chart
