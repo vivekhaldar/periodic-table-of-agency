@@ -1,0 +1,958 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#16130d">
+  <meta name="description" content="The Periodic Table of Agency: 29 atomic operators, eight bond types, three bond strengths, reusable functional groups, and the compounds and complexes they compose.">
+  <title>The Periodic Table of Agency</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=Spectral:ital,wght@0,300;0,400;0,600;1,300;1,400&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: oklch(16% 0.012 75);
+      --panel: oklch(20% 0.014 75);
+      --panel-2: oklch(24% 0.016 75);
+      --ink: oklch(92% 0.02 85);
+      --dim: oklch(68% 0.018 80);
+      --line: oklch(34% 0.02 78);
+      --line-soft: oklch(27% 0.016 78);
+      --amber: oklch(80% 0.15 75);
+      --alert: oklch(66% 0.19 33);
+      --oxide: oklch(21% 0.03 40);
+      --f-elicitation: oklch(84% 0.14 88);
+      --f-context: oklch(72% 0.11 230);
+      --f-action: oklch(73% 0.16 55);
+      --f-control: oklch(74% 0.12 350);
+      --f-feedback: oklch(76% 0.12 150);
+      --f-governance: oklch(70% 0.10 300);
+      --f-durability: oklch(76% 0.10 190);
+      --display: "Big Shoulders Display", "Arial Narrow", sans-serif;
+      --serif: Spectral, Georgia, serif;
+      --mono: "IBM Plex Mono", ui-monospace, monospace;
+      --ease: cubic-bezier(.22,1,.36,1);
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      min-width: 320px;
+      background:
+        linear-gradient(color-mix(in oklch, var(--amber) 3.5%, transparent) 1px, transparent 1px) 0 0 / 100% 56px,
+        linear-gradient(90deg, color-mix(in oklch, var(--amber) 3.5%, transparent) 1px, transparent 1px) 0 0 / 56px 100%,
+        var(--bg);
+      color: var(--ink);
+      font-family: var(--serif);
+      font-weight: 300;
+      line-height: 1.55;
+      overflow-x: hidden;
+    }
+    ::selection { background: var(--amber); color: var(--bg); }
+
+    button, a { -webkit-tap-highlight-color: transparent; }
+    button { font: inherit; }
+    a { color: inherit; }
+    :focus-visible { outline: 2px solid var(--amber); outline-offset: 3px; }
+    .skip-link { position: fixed; left: 1rem; top: -5rem; z-index: 100; background: var(--amber); color: var(--bg); border: 0; padding: .7rem 1rem; font: 600 .8rem var(--mono); text-transform: uppercase; }
+    .skip-link:focus { top: 1rem; }
+
+    .shell { width: min(1460px, 100%); margin-inline: auto; padding-inline: clamp(1rem, 4vw, 4rem); }
+
+    /* ---------- masthead ---------- */
+    .masthead {
+      display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+      padding-block: max(.9rem, env(safe-area-inset-top)) .9rem;
+      border-bottom: 1px solid var(--line);
+      font: 500 .68rem var(--mono);
+      letter-spacing: .08em; text-transform: uppercase;
+    }
+    .brand { display: flex; align-items: center; gap: .7rem; text-decoration: none; color: var(--ink); }
+    .brand-mark { display: grid; place-items: center; width: 2.1rem; aspect-ratio: 1; background: var(--amber); color: var(--bg); font: 700 1.05rem var(--display); }
+    .masthead nav { display: none; gap: 1.5rem; color: var(--dim); }
+    .masthead nav a { text-decoration: none; }
+    .masthead nav a:hover { color: var(--amber); }
+    .status { display: none; align-items: center; gap: .5rem; color: var(--dim); }
+    .status::before { content: ""; width: .5rem; height: .5rem; border-radius: 50%; background: var(--f-feedback); animation: blink 2.4s step-end infinite; }
+    @keyframes blink { 50% { opacity: .25; } }
+
+    /* ---------- section chrome ---------- */
+    section { padding-block: clamp(4rem, 8vw, 7.5rem); border-top: 1px solid var(--line-soft); }
+    .sheet-tag { display: flex; align-items: baseline; gap: 1rem; margin: 0 0 clamp(1.6rem, 3vw, 2.6rem); font: 500 .68rem var(--mono); letter-spacing: .14em; text-transform: uppercase; color: var(--amber); }
+    .sheet-tag::after { content: ""; flex: 1; height: 1px; background: var(--line); align-self: center; }
+    .sheet-tag small { color: var(--dim); font-size: inherit; }
+    .section-head { display: grid; gap: 1.4rem; margin-bottom: clamp(2.4rem, 5vw, 3.8rem); }
+    h1, h2, h3, p { margin-top: 0; }
+    h2 { max-width: 16ch; margin-bottom: 0; font: 700 clamp(3rem, 8vw, 7.5rem)/.88 var(--display); letter-spacing: .005em; text-transform: uppercase; }
+    .section-intro { max-width: 46rem; margin-bottom: 0; font-size: clamp(1.08rem, 1.8vw, 1.32rem); line-height: 1.5; color: var(--dim); }
+    .section-intro strong { color: var(--ink); font-weight: 600; }
+
+    /* ---------- hero ---------- */
+    .hero { padding-block: clamp(3.5rem, 9vw, 8rem); border-top: 0; }
+    .hero-grid { display: grid; gap: 3rem; }
+    .hero-grid > * { min-width: 0; }
+    .kicker { margin: 0 0 1.4rem; font: 500 .7rem var(--mono); letter-spacing: .16em; text-transform: uppercase; color: var(--amber); }
+    h1 { max-width: 12ch; margin-bottom: 1.6rem; font: 800 clamp(3.6rem, 14vw, 11rem)/.85 var(--display); text-transform: uppercase; letter-spacing: .005em; }
+    h1 em { font-style: normal; color: var(--amber); }
+    h1 .cursor { display: inline-block; width: .45em; height: .78em; margin-left: .08em; background: var(--amber); animation: blink 1.1s step-end infinite; vertical-align: baseline; }
+    .lede { max-width: 40rem; margin: 0; font-size: clamp(1.15rem, 2.4vw, 1.6rem); line-height: 1.45; color: var(--dim); }
+    .lede strong { color: var(--ink); font-weight: 400; }
+    .hero-atom {
+      position: relative; width: min(19rem, 74vw); aspect-ratio: 1; justify-self: center;
+      display: grid; place-items: center;
+      background: var(--panel); border: 1px solid var(--line);
+    }
+    .hero-atom .corner { position: absolute; width: 1rem; height: 1rem; border: 0 solid var(--amber); }
+    .corner.tl { top: -1px; left: -1px; border-top-width: 2px; border-left-width: 2px; }
+    .corner.tr { top: -1px; right: -1px; border-top-width: 2px; border-right-width: 2px; }
+    .corner.bl { bottom: -1px; left: -1px; border-bottom-width: 2px; border-left-width: 2px; }
+    .corner.br { bottom: -1px; right: -1px; border-bottom-width: 2px; border-right-width: 2px; }
+    .orbit { position: absolute; inset: 11%; border: 1px dashed color-mix(in oklch, var(--amber) 55%, transparent); border-radius: 50%; animation: orbit 26s linear infinite; }
+    .orbit::after { content: ""; position: absolute; top: -4px; left: calc(50% - 4px); width: 8px; height: 8px; border-radius: 50%; background: var(--amber); }
+    @keyframes orbit { to { transform: rotate(360deg); } }
+    .hero-symbol { font: 800 clamp(6rem, 22vw, 9.5rem)/1 var(--display); color: var(--amber); }
+    .hero-num { position: absolute; top: .8rem; left: .9rem; font: 500 .7rem var(--mono); color: var(--dim); }
+    .hero-name { position: absolute; bottom: .75rem; left: .9rem; font: 600 .78rem var(--mono); letter-spacing: .12em; text-transform: uppercase; }
+    .hero-mass { position: absolute; bottom: .8rem; right: .9rem; font: italic 400 .85rem var(--serif); color: var(--dim); }
+
+    .thesis { display: grid; gap: 0; border-block: 1px solid var(--line); }
+    .thesis-item { padding: 1.4rem 0; border-bottom: 1px solid var(--line-soft); }
+    .thesis-item:last-child { border-bottom: 0; }
+    .thesis-label { display: block; margin-bottom: .45rem; font: 600 .66rem var(--mono); letter-spacing: .14em; text-transform: uppercase; color: var(--amber); }
+    .thesis-item p { max-width: 56ch; margin: 0; font-size: 1rem; color: var(--dim); }
+
+    /* ---------- periodic table ---------- */
+    .filter-bar { display: flex; gap: .5rem; overflow-x: auto; padding: .2rem .2rem .9rem; margin-inline: -.2rem; scrollbar-width: thin; }
+    .filter {
+      flex: 0 0 auto; min-height: 44px; padding: .5rem .85rem;
+      border: 1px solid var(--line); background: transparent; color: var(--dim);
+      cursor: pointer; font: 500 .68rem var(--mono); letter-spacing: .06em; text-transform: uppercase;
+      transition: color 130ms, border-color 130ms, background 130ms;
+    }
+    .filter:hover { color: var(--ink); border-color: var(--dim); }
+    .filter[aria-pressed="true"] { background: var(--active-family, var(--amber)); border-color: var(--active-family, var(--amber)); color: var(--bg); font-weight: 600; }
+    .filter[data-filter="elicitation"] { --active-family: var(--f-elicitation); }
+    .filter[data-filter="context"] { --active-family: var(--f-context); }
+    .filter[data-filter="action"] { --active-family: var(--f-action); }
+    .filter[data-filter="control"] { --active-family: var(--f-control); }
+    .filter[data-filter="feedback"] { --active-family: var(--f-feedback); }
+    .filter[data-filter="governance"] { --active-family: var(--f-governance); }
+    .filter[data-filter="durability"] { --active-family: var(--f-durability); }
+    .filter-status { display: flex; align-items: center; justify-content: space-between; gap: 1rem; min-height: 2rem; margin: 0 0 1.1rem; padding-bottom: .7rem; border-bottom: 1px solid var(--line-soft); font: 400 .78rem var(--mono); color: var(--dim); }
+    .filter-status strong { color: var(--amber); font-weight: 600; }
+
+    .periodic-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: .4rem; }
+    .periodic-grid.is-filtered { grid-template-columns: repeat(auto-fit, minmax(4.7rem, 1fr)); }
+    .element {
+      position: relative; min-width: 0; aspect-ratio: .92; padding: .45rem;
+      border: 1px solid var(--line);
+      background: color-mix(in oklch, var(--family) 9%, var(--panel));
+      color: var(--ink); cursor: pointer; text-align: left;
+      transition: transform 160ms var(--ease), border-color 160ms, background 160ms;
+      animation: enter 480ms var(--ease) both;
+      animation-delay: calc(min(var(--i), 12) * 22ms);
+    }
+    .element::before { content: ""; position: absolute; inset: 0 auto auto 0; width: 100%; height: 3px; background: var(--family); }
+    .element:hover { transform: translateY(-3px); border-color: var(--family); z-index: 2; }
+    .element:active { transform: translateY(0); }
+    .element[hidden] { display: none !important; }
+    .element.is-selected { background: var(--family); color: var(--bg); border-color: var(--family); z-index: 3; }
+    .element.is-selected .element-symbol, .element.is-selected .atomic-number, .element.is-selected .element-shell { color: var(--bg); }
+    .atomic-number { position: absolute; top: .5rem; left: .45rem; font: 500 clamp(.5rem, 2vw, .64rem) var(--mono); color: var(--dim); }
+    .element-symbol { display: block; padding-top: .55rem; font: 700 clamp(1.7rem, 7.5vw, 3.4rem)/1 var(--display); color: var(--family); text-align: center; }
+    .element-name { display: block; margin-top: .3rem; overflow: hidden; font: 500 clamp(.5rem, 2vw, .66rem) var(--mono); letter-spacing: .04em; line-height: 1.1; text-overflow: ellipsis; white-space: nowrap; text-transform: uppercase; text-align: center; }
+    .element-shell { display: none; font: 400 .58rem var(--mono); color: var(--dim); text-align: center; text-transform: uppercase; letter-spacing: .08em; }
+    .family-elicitation { --family: var(--f-elicitation); }
+    .family-context { --family: var(--f-context); }
+    .family-action { --family: var(--f-action); }
+    .family-control { --family: var(--f-control); }
+    .family-feedback { --family: var(--f-feedback); }
+    .family-governance { --family: var(--f-governance); }
+    .family-durability { --family: var(--f-durability); }
+    .grid-axes { display: flex; flex-wrap: wrap; gap: .4rem 1.6rem; margin: 1rem 0 0; font: 500 .64rem var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--dim); }
+    .grid-axes strong { color: var(--amber); font-weight: 600; }
+
+    .element-detail {
+      position: relative; display: grid; gap: 1.1rem; margin-top: 1.6rem; padding: 1.4rem;
+      background: var(--panel); border: 1px solid var(--line);
+    }
+    .element-detail .corner { position: absolute; width: .85rem; height: .85rem; border: 0 solid var(--amber); }
+    .detail-symbol { align-self: start; font: 800 4.6rem/.8 var(--display); color: var(--amber); }
+    .detail-copy h3 { margin-bottom: .3rem; font: 700 1.6rem/1 var(--display); text-transform: uppercase; letter-spacing: .02em; }
+    .detail-copy .detail-question { margin-bottom: .55rem; font: italic 400 1.02rem/1.3 var(--serif); color: var(--amber); }
+    .detail-copy p { margin-bottom: .7rem; font-size: 1rem; line-height: 1.45; color: var(--dim); }
+    .detail-meta { display: flex; flex-wrap: wrap; gap: .4rem; }
+    .detail-meta span { padding: .24rem .5rem; border: 1px solid var(--line); font: 500 .6rem var(--mono); letter-spacing: .06em; text-transform: uppercase; color: var(--dim); }
+    .detail-links { display: flex; flex-wrap: wrap; gap: .55rem; margin-top: .9rem; }
+    .detail-links a { display: inline-flex; min-height: 44px; align-items: center; padding: .5rem .8rem; border: 1px solid var(--amber); color: var(--amber); font: 600 .66rem var(--mono); letter-spacing: .05em; text-transform: uppercase; text-decoration: none; transition: background 130ms, color 130ms; }
+    .detail-links a:hover { background: var(--amber); color: var(--bg); }
+    .detail-links a:last-child { border-color: var(--line); color: var(--dim); }
+    .detail-links a:last-child:hover { border-color: var(--ink); background: var(--ink); color: var(--bg); }
+
+    .legend { display: grid; grid-template-columns: repeat(2, 1fr); gap: .55rem 1rem; margin-top: 1.8rem; font: 500 .64rem var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--dim); }
+    .legend-item { display: flex; align-items: center; gap: .5rem; }
+    .swatch { width: .8rem; height: .8rem; background: var(--family); }
+
+    /* ---------- bonds ---------- */
+    .rules-section { position: relative; background: var(--oxide); overflow: hidden; }
+    .rules-section::after { content: "BOND"; position: absolute; right: -1rem; top: 0; color: color-mix(in oklch, var(--ink) 5%, transparent); font: 800 clamp(8rem, 26vw, 24rem)/1 var(--display); pointer-events: none; }
+    .rules-section > .shell { position: relative; z-index: 1; }
+    .bond-types { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .55rem; margin-bottom: 3.2rem; }
+    .bond-type { min-width: 0; padding: 1.05rem; border: 1px solid var(--line); background: color-mix(in oklch, var(--bg) 55%, var(--oxide)); }
+    .bond-glyph { display: block; margin-bottom: .8rem; font: 600 clamp(1.4rem, 4.5vw, 2.2rem)/1 var(--mono); color: var(--amber); white-space: nowrap; }
+    .bond-type h3 { margin-bottom: .3rem; font: 700 1.05rem/1 var(--display); text-transform: uppercase; letter-spacing: .04em; }
+    .bond-type p { margin: 0; color: var(--dim); font-size: .92rem; line-height: 1.4; }
+
+    .bond-strength { margin-bottom: 3.2rem; padding: 1.4rem; background: var(--amber); color: var(--bg); }
+    .bond-strength strong { display: block; margin-bottom: .4rem; font: 700 1.3rem var(--display); text-transform: uppercase; letter-spacing: .03em; }
+    .bond-strength > p { max-width: 72ch; margin: 0 0 1.2rem; font-weight: 400; }
+    .bond-strength code { font: 600 .9em var(--mono); }
+    .strength-demo { display: grid; gap: .55rem; }
+    .strength-row { display: grid; gap: .6rem; padding: .9rem 1rem; background: var(--bg); color: var(--ink); border: 1px solid color-mix(in oklch, var(--bg) 70%, var(--amber)); }
+    .strength-label { display: grid; gap: .3rem; font: 600 .66rem var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--amber); }
+    .strength-label em { color: var(--dim); font: italic 300 .95rem/1.35 var(--serif); letter-spacing: 0; text-transform: none; }
+
+    .rules-title { margin-bottom: 1rem; font: 500 .68rem var(--mono); letter-spacing: .14em; text-transform: uppercase; color: var(--amber); }
+    .rules-grid { display: grid; gap: 0; border-top: 1px solid var(--line); }
+    .rule { display: grid; grid-template-columns: 3rem 1fr; gap: 1rem; padding-block: 1.5rem; border-bottom: 1px solid var(--line); }
+    .rule-number { font: 600 1.5rem/1.2 var(--mono); color: var(--amber); }
+    .rule h3 { margin-bottom: .35rem; font: 700 1.35rem/1 var(--display); text-transform: uppercase; letter-spacing: .03em; }
+    .rule p { max-width: 54ch; margin: 0; color: var(--dim); font-size: .98rem; }
+    .rule code { font: 500 .88em var(--mono); color: var(--ink); }
+
+    /* ---------- groups ---------- */
+    .taxonomy-ladder { display: grid; margin-bottom: clamp(2.6rem, 5vw, 4.5rem); border: 1px solid var(--line); }
+    .taxonomy-rung { position: relative; padding: 1.2rem; border-bottom: 1px solid var(--line); background: var(--panel); }
+    .taxonomy-rung:last-child { border-bottom: 0; }
+    .taxonomy-rung::after { content: "→"; position: absolute; right: 1rem; bottom: -.8rem; z-index: 2; display: grid; place-items: center; width: 1.6rem; height: 1.6rem; background: var(--amber); color: var(--bg); font: 600 .85rem var(--mono); }
+    .taxonomy-rung:last-child::after { display: none; }
+    .taxonomy-rung span { font: 600 .6rem var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--amber); }
+    .taxonomy-rung h3 { margin: .3rem 0 .35rem; font: 700 1.4rem/1 var(--display); text-transform: uppercase; letter-spacing: .03em; }
+    .taxonomy-rung p { margin: 0; font-size: .95rem; color: var(--dim); }
+    .group-list { display: grid; gap: .55rem; }
+    .functional-group { min-width: 0; padding: 1.2rem; border: 1px solid var(--line-soft); background: var(--panel); }
+    .group-id { display: block; margin-bottom: .7rem; font: 500 .62rem var(--mono); letter-spacing: .12em; color: var(--dim); }
+    .functional-group h3 { margin: .9rem 0 .35rem; font: 700 1.4rem/1 var(--display); text-transform: uppercase; letter-spacing: .03em; }
+    .functional-group p { margin: 0; font-size: .96rem; color: var(--dim); }
+    .chemistry-note { margin-top: 2.4rem; padding: 1.2rem 1.3rem; border: 1px dashed var(--line); font-size: .98rem; line-height: 1.5; color: var(--dim); }
+    .chemistry-note strong { color: var(--ink); font-weight: 600; }
+    .chemistry-note a { color: var(--amber); }
+
+    /* ---------- formulas (shared) ---------- */
+    .formula { display: grid; gap: .3rem; min-width: 0; margin-bottom: 1rem; }
+    .formula-line { display: flex; flex-wrap: wrap; align-items: center; gap: .45rem .3rem; padding: .35rem 0 .5rem; border-bottom: 1px dotted var(--line-soft); }
+    .formula-line:last-child { border-bottom: 0; }
+    .formula-atom {
+      display: grid; flex: 0 0 auto; place-items: center; width: 2.5rem; aspect-ratio: 1;
+      background: color-mix(in oklch, var(--family) 14%, var(--panel));
+      border: 1px solid var(--family); border-top-width: 3px;
+      color: var(--family); font: 600 .85rem var(--mono); cursor: help;
+    }
+    .formula-atom.has-variant { grid-template-columns: auto auto; width: auto; min-width: 3.4rem; height: 2.5rem; aspect-ratio: auto; gap: .22rem; padding-inline: .42rem; }
+    .formula-atom small { align-self: end; padding-bottom: .34rem; font-size: .52rem; font-weight: 500; line-height: 1; letter-spacing: .02em; }
+    .formula--compact .formula-atom { width: 2.1rem; font-size: .74rem; }
+    .formula--compact .formula-atom.has-variant { width: auto; min-width: 2.9rem; height: 2.1rem; }
+    .molecule-chip { display: inline-flex; flex: 0 0 auto; align-items: center; height: 2.5rem; padding-inline: .6rem; border: 1px dashed var(--dim); color: var(--dim); font: 600 .68rem var(--mono); letter-spacing: .04em; text-transform: uppercase; cursor: help; }
+    .bond-symbol { display: grid; flex: 0 0 auto; min-width: 1.3rem; place-items: center; color: var(--amber); font: 600 1.15rem/1 var(--mono); cursor: help; animation: signal 4.2s var(--ease) infinite; animation-delay: calc(var(--k, 0) * 300ms); }
+    @keyframes signal { 0%, 100% { opacity: .5; } 5%, 11% { opacity: 1; } 16% { opacity: .5; } }
+    .bond-symbol[data-bond="gate"] { color: var(--f-governance); }
+    .bond-symbol[data-bond="evidence"] { color: var(--f-feedback); }
+    .bond-symbol[data-bond="feedback"] { color: var(--alert); }
+    .bond-symbol[data-bond="parallel"] { color: var(--f-context); }
+    .bond-symbol[data-bond="containment"] { min-width: .6rem; color: var(--alert); font-size: 1.5rem; }
+    .bond-symbol[data-bond="together"] { font-size: .95rem; color: var(--dim); }
+    .bond-symbol sup { margin-left: .06em; font-size: .6em; }
+    .bond-symbol.is-advisory { opacity: .45; animation: none; }
+    .bond-symbol.is-enforced { text-decoration: underline double; text-underline-offset: .24em; }
+    .formula-mark { display: grid; flex: 0 0 auto; min-width: .7rem; place-items: center; font: 500 1rem var(--mono); color: var(--dim); }
+
+    /* ---------- molecules ---------- */
+    .howto { display: grid; gap: .4rem; margin-bottom: 2rem; padding: 1.2rem 1.3rem; border: 1px solid var(--line); background: var(--panel); }
+    .howto h3 { margin-bottom: .4rem; font: 700 1.15rem var(--display); text-transform: uppercase; letter-spacing: .04em; color: var(--amber); }
+    .howto ul { margin: 0; padding-left: 1.1rem; font-size: .95rem; line-height: 1.55; color: var(--dim); }
+    .howto li { margin-bottom: .3rem; }
+    .howto li:last-child { margin-bottom: 0; }
+    .howto code { font: 500 .88em var(--mono); color: var(--ink); }
+    .formula-key { display: flex; flex-wrap: wrap; gap: .4rem; margin: 0 0 2rem; }
+    .formula-key span { flex: 0 0 auto; padding: .3rem .55rem; border: 1px solid var(--line); font: 500 .64rem var(--mono); letter-spacing: .04em; color: var(--dim); }
+    .molecule-list, .complex-list { display: grid; gap: .8rem; min-width: 0; }
+    .molecule { position: relative; min-width: 0; padding: 1.4rem; border: 1px solid var(--line); background: var(--panel); }
+    .molecule-index { position: absolute; top: .85rem; right: .9rem; font: 500 .64rem var(--mono); letter-spacing: .1em; color: var(--dim); }
+    .molecule-kind { margin-bottom: .3rem; font: 600 .62rem var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--amber); }
+    .molecule h3 { max-width: 16ch; margin-bottom: 1.1rem; font: 700 clamp(1.8rem, 5vw, 2.7rem)/.92 var(--display); text-transform: uppercase; letter-spacing: .02em; }
+    .molecule p { max-width: 60ch; margin-bottom: 0; font-size: .98rem; line-height: 1.5; color: var(--dim); }
+    .molecule .warning { margin-top: 1rem; padding-top: .9rem; border-top: 1px dashed var(--line); font: 500 .74rem/1.5 var(--mono); color: var(--ink); }
+    .molecule .warning::before { content: "FAILURE MODE — "; color: var(--alert); font-weight: 600; }
+    .molecule .wild { margin-top: .9rem; font: 500 .74rem/1.5 var(--mono); color: var(--dim); }
+    .molecule .wild::before { content: "IN THE WILD — "; color: var(--f-feedback); font-weight: 600; }
+
+    .complexes-section { background: color-mix(in oklch, var(--panel) 45%, var(--bg)); }
+
+    /* ---------- layers ---------- */
+    .layer-map { display: grid; gap: 0; border: 1px solid var(--line); }
+    .layer { padding: clamp(1.2rem, 4vw, 2.4rem); border-bottom: 1px solid var(--line); background: var(--panel); }
+    .layer:last-child { border-bottom: 0; }
+    .layer:first-child { margin: clamp(1rem, 4vw, 2.8rem); margin-bottom: 0; border: 1px solid var(--line); background: var(--f-elicitation); color: var(--bg); }
+    .layer:nth-child(2) { margin: 0 clamp(.5rem, 2vw, 1.4rem); border-inline: 1px solid var(--line); background: var(--f-context); color: var(--bg); }
+    .layer:first-child .layer-num, .layer:nth-child(2) .layer-num { color: color-mix(in oklch, var(--bg) 75%, transparent); }
+    .layer:first-child p, .layer:nth-child(2) p { color: color-mix(in oklch, var(--bg) 82%, transparent); }
+    .layer-num { font: 600 .62rem var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--amber); }
+    .layer h3 { margin: .35rem 0 .5rem; font: 700 clamp(1.7rem, 4vw, 2.9rem)/1 var(--display); text-transform: uppercase; letter-spacing: .02em; }
+    .layer p { max-width: 62ch; margin: 0; font-size: .98rem; color: var(--dim); }
+
+    /* ---------- appendix ---------- */
+    .appendix { position: relative; overflow: hidden; }
+    .appendix::before { content: "A"; position: absolute; right: -2vw; top: -3rem; color: color-mix(in oklch, var(--amber) 6%, transparent); font: 800 clamp(16rem, 42vw, 40rem)/.8 var(--display); pointer-events: none; }
+    .appendix .shell { position: relative; z-index: 1; }
+    .appendix-grid { display: grid; gap: 2rem; }
+    .appendix-question { max-width: 26ch; margin: 0; font: italic 300 clamp(1.7rem, 3.6vw, 3.1rem)/1.2 var(--serif); }
+    .appendix-question em { color: var(--amber); font-style: inherit; }
+    .criteria-list { margin: 0; padding: 0; list-style: none; border-top: 1px solid var(--line); counter-reset: criterion; }
+    .criteria-list li { display: grid; grid-template-columns: 2.2rem 1fr; gap: .8rem; padding-block: .95rem; border-bottom: 1px solid var(--line-soft); font-size: .98rem; line-height: 1.5; color: var(--dim); counter-increment: criterion; }
+    .criteria-list li::before { content: counter(criterion, decimal-leading-zero); color: var(--amber); font: 600 .72rem/1.9 var(--mono); }
+    .normalization-note { display: grid; gap: 1rem; margin-top: 2.6rem; padding: 1.3rem; border: 1px solid var(--line); background: var(--panel); }
+    .normalization-note h3 { margin: 0; font: 700 1.25rem var(--display); text-transform: uppercase; letter-spacing: .04em; color: var(--amber); }
+    .normalization-note p { max-width: 78ch; margin: 0; font-size: .96rem; line-height: 1.55; color: var(--dim); }
+    .normalization-note strong { color: var(--ink); font-weight: 600; }
+    .normalization-note code { font: 500 .88em var(--mono); color: var(--ink); }
+
+    /* ---------- coda + title block ---------- */
+    .coda { padding-block: clamp(4.5rem, 10vw, 9rem) 0; background: var(--amber); color: var(--bg); border-top: 0; }
+    .coda blockquote { max-width: 16ch; margin: 0 0 clamp(3rem, 7vw, 6rem); font: 800 clamp(2.8rem, 9vw, 8rem)/.88 var(--display); text-transform: uppercase; letter-spacing: .01em; }
+    .coda blockquote em { font-style: normal; color: color-mix(in oklch, var(--bg) 55%, var(--amber)); }
+    .title-block { display: grid; grid-template-columns: repeat(2, 1fr); border: 1px solid var(--bg); border-bottom: 0; margin-bottom: clamp(2rem, 5vw, 4rem); }
+    .tb-cell { padding: .7rem .9rem; border-bottom: 1px solid var(--bg); border-right: 1px solid var(--bg); }
+    .tb-cell:nth-child(2n) { border-right: 0; }
+    .tb-cell dt { margin: 0 0 .2rem; font: 600 .58rem var(--mono); letter-spacing: .14em; text-transform: uppercase; opacity: .65; }
+    .tb-cell dd { margin: 0; font: 500 .8rem var(--mono); }
+    .tb-cell a { color: inherit; }
+
+    /* ---------- tooltip ---------- */
+    #tooltip {
+      position: fixed; z-index: 200; max-width: 19rem; padding: .65rem .8rem;
+      background: var(--bg); color: var(--ink); border: 1px solid var(--amber);
+      font: 400 .8rem/1.45 var(--serif); pointer-events: none;
+      opacity: 0; transform: translateY(4px); transition: opacity 120ms, transform 120ms var(--ease);
+    }
+    #tooltip.is-visible { opacity: 1; transform: translateY(0); }
+    #tooltip .tt-title { display: block; margin-bottom: .25rem; font: 600 .66rem var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--amber); }
+
+    @keyframes enter { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+    @media (min-width: 640px) {
+      .masthead nav { display: flex; }
+      .status { display: flex; }
+      .hero-grid { grid-template-columns: minmax(0, 1.35fr) minmax(17rem, .65fr); align-items: center; }
+      .thesis { grid-template-columns: repeat(4, 1fr); }
+      .thesis-item { padding: 1.6rem; border-right: 1px solid var(--line-soft); border-bottom: 0; }
+      .thesis-item:first-child { padding-left: 0; }
+      .thesis-item:last-child { padding-right: 0; border-right: 0; }
+      .section-head { grid-template-columns: minmax(0, 1fr) minmax(19rem, .72fr); align-items: end; }
+      .periodic-grid { grid-template-columns: repeat(8, minmax(0, 1fr)); gap: .5rem; }
+      .periodic-grid.is-filtered { grid-template-columns: repeat(auto-fit, minmax(6.5rem, 1fr)); }
+      .element-detail { grid-template-columns: 5.5rem 1fr; padding: 1.7rem; }
+      .legend { grid-template-columns: repeat(4, max-content); }
+      .bond-types { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+      .strength-row { grid-template-columns: minmax(16rem, .8fr) minmax(0, 1.2fr); align-items: center; }
+      .rules-grid { grid-template-columns: repeat(2, 1fr); }
+      .rule { padding: 1.6rem; border-right: 1px solid var(--line); }
+      .rule:nth-child(2n) { border-right: 0; }
+      .taxonomy-ladder { grid-template-columns: repeat(5, 1fr); }
+      .taxonomy-rung { border-right: 1px solid var(--line); border-bottom: 0; }
+      .taxonomy-rung:last-child { border-right: 0; }
+      .taxonomy-rung::after { right: -.8rem; bottom: 50%; transform: translateY(50%); }
+      .group-list { grid-template-columns: repeat(2, 1fr); }
+      .molecule-list, .complex-list { grid-template-columns: repeat(2, 1fr); }
+      .molecule { padding: 1.7rem; }
+      .appendix-grid { grid-template-columns: minmax(18rem, .8fr) minmax(0, 1.2fr); align-items: start; }
+      .title-block { grid-template-columns: repeat(6, 1fr); }
+      .tb-cell { border-right: 1px solid var(--bg); border-bottom: 0; }
+      .tb-cell:nth-child(2n) { border-right: 1px solid var(--bg); }
+      .tb-cell:last-child { border-right: 0; }
+    }
+    @media (min-width: 1024px) {
+      .element { grid-column: var(--col); grid-row: var(--row); padding: .55rem; }
+      .periodic-grid.is-filtered .element { grid-column: auto; grid-row: auto; }
+      .element-symbol { font-size: clamp(2.2rem, 3.6vw, 4rem); }
+      .element-name { font-size: .62rem; }
+      .element-shell { display: block; }
+      .molecule-list { grid-template-columns: repeat(12, 1fr); }
+      .molecule-list .molecule:nth-child(1) { grid-column: 1 / span 5; }
+      .molecule-list .molecule:nth-child(2) { grid-column: 6 / span 7; }
+      .molecule-list .molecule:nth-child(3) { grid-column: 1 / span 7; }
+      .molecule-list .molecule:nth-child(4) { grid-column: 8 / span 5; }
+      .molecule-list .molecule:nth-child(5) { grid-column: 1 / span 5; }
+      .molecule-list .molecule:nth-child(6) { grid-column: 6 / span 7; }
+      .molecule-list .molecule:nth-child(7) { grid-column: 1 / span 7; }
+      .molecule-list .molecule:nth-child(8) { grid-column: 8 / span 5; }
+      .molecule-list .molecule:nth-child(9) { grid-column: 1 / span 5; }
+      .molecule-list .molecule:nth-child(10) { grid-column: 6 / span 7; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      *, *::before, *::after { animation-duration: .01ms !important; animation-delay: 0ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+    }
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to the periodic table</a>
+  <header class="shell masthead">
+    <a class="brand" href="#top" aria-label="The Periodic Table of Agency home"><span class="brand-mark">Ag</span><span>Periodic Table<br>of Agency</span></a>
+    <nav aria-label="Page sections"><a href="#table">Atoms</a><a href="#bonds">Bonds</a><a href="#groups">Groups</a><a href="#molecules">Compounds</a><a href="#complexes">Complexes</a><a href="#appendix">Appendix</a></nav>
+    <span class="status" aria-hidden="true">Rev 0.6 · Nominal</span>
+  </header>
+
+  <main id="main">
+    <section class="hero shell" id="top">
+      <div class="hero-grid">
+        <div>
+          <p class="kicker">Field chart — 29 elements / 7 families / 8 bonds / 3 strengths</p>
+          <h1>The Periodic Table <em>of Agency</em><span class="cursor" aria-hidden="true"></span></h1>
+          <p class="lede">A compositional map of the building blocks behind agentic systems—and the <strong>bonds, functional groups, compounds, and complexes</strong> they form.</p>
+        </div>
+        <div class="hero-atom" aria-label="Agent composition element">
+          <span class="corner tl"></span><span class="corner tr"></span><span class="corner bl"></span><span class="corner br"></span>
+          <span class="orbit" aria-hidden="true"></span>
+          <span class="hero-num">00</span>
+          <span class="hero-symbol">Ag</span>
+          <span class="hero-name">Agency</span>
+          <span class="hero-mass">emergent</span>
+        </div>
+      </div>
+    </section>
+
+    <div class="shell thesis" aria-label="Core definitions">
+      <div class="thesis-item"><span class="thesis-label">Atom</span><p>The smallest reusable operator with independent engineering meaning—not an artifact, modality, or already-composed pattern.</p></div>
+      <div class="thesis-item"><span class="thesis-label">Functional group</span><p>A recurring subassembly that gives many different agents the same characteristic behavior.</p></div>
+      <div class="thesis-item"><span class="thesis-label">Molecule</span><p>One cohesive agent pattern with a bounded purpose and runtime identity.</p></div>
+      <div class="thesis-item"><span class="thesis-label">Complex</span><p>Several agent molecules coordinated by an orchestrator, protocol, or shared environment.</p></div>
+    </div>
+
+    <section id="table">
+      <div class="shell">
+        <p class="sheet-tag">Sht 01 — The atoms <small>· 29 squares</small></p>
+        <div class="section-head">
+          <h2>29 elements, seven behavioral families</h2>
+          <p class="section-intro">Families group atoms by the job they perform, and <strong>position encodes reach</strong>: moving right within a row widens an atom’s control radius; moving down the table lengthens the time horizon it governs. Tap an element for its definition, likely bonds, and a route into the Harness Course or a canonical reading.</p>
+        </div>
+        <div class="filter-bar" role="toolbar" aria-label="Filter atom families">
+          <button class="filter" data-filter="all" aria-pressed="true">All · 29</button>
+          <button class="filter" data-filter="elicitation" aria-pressed="false">Elicitation · 4</button>
+          <button class="filter" data-filter="context" aria-pressed="false">Context · 5</button>
+          <button class="filter" data-filter="action" aria-pressed="false">Action · 1</button>
+          <button class="filter" data-filter="control" aria-pressed="false">Control · 7</button>
+          <button class="filter" data-filter="feedback" aria-pressed="false">Feedback · 5</button>
+          <button class="filter" data-filter="governance" aria-pressed="false">Governance · 4</button>
+          <button class="filter" data-filter="durability" aria-pressed="false">Durability · 3</button>
+        </div>
+        <p class="filter-status" id="filter-status"><span>Showing the full periodic arrangement.</span><strong>29 elements</strong></p>
+        <div class="periodic-grid" id="periodic-grid" aria-label="Periodic table"></div>
+        <p class="grid-axes" aria-label="How to read the table's position"><span><strong>→</strong> Across a row: wider control radius</span><span><strong>↓</strong> Down the table: longer time horizons</span></p>
+        <aside class="element-detail" id="element-detail" aria-live="polite"></aside>
+        <div class="legend" aria-label="Family legend">
+          <span class="legend-item family-elicitation"><span class="swatch"></span>Elicitation</span>
+          <span class="legend-item family-context"><span class="swatch"></span>Context</span>
+          <span class="legend-item family-action"><span class="swatch"></span>Action</span>
+          <span class="legend-item family-control"><span class="swatch"></span>Control</span>
+          <span class="legend-item family-feedback"><span class="swatch"></span>Feedback</span>
+          <span class="legend-item family-governance"><span class="swatch"></span>Governance</span>
+          <span class="legend-item family-durability"><span class="swatch"></span>Durability</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="rules-section" id="bonds">
+      <div class="shell">
+        <p class="sheet-tag">Sht 02 — Bond topology <small>· 8 bond types / 3 strengths</small></p>
+        <div class="section-head">
+          <h2>How elements hold together matters</h2>
+          <p class="section-intro">Agentic bonds are control relationships: order, feedback, gates, evidence, shared state, fan-out, co-presence, and containment. <strong>Topology sketches how a compound behaves—the strength of each bond decides whether it actually does.</strong></p>
+        </div>
+        <div class="bond-types" aria-label="Eight agentic bond types">
+          <article class="bond-type"><span class="bond-glyph">A → B</span><h3>Sequence</h3><p>Output from A becomes input to B.</p></article>
+          <article class="bond-type"><span class="bond-glyph">A ↺ Ob</span><h3>Feedback</h3><p>Observation changes the next action.</p></article>
+          <article class="bond-type"><span class="bond-glyph">G ⊣ A</span><h3>Gate</h3><p>The left side can block the right side.</p></article>
+          <article class="bond-type"><span class="bond-glyph">A ⊨ Vf</span><h3>Evidence</h3><p>The left side must satisfy the right-side check. Read ⊨ as “must satisfy.”</p></article>
+          <article class="bond-type"><span class="bond-glyph">A—Xt—B</span><h3>State</h3><p>Information persists across steps or time.</p></article>
+          <article class="bond-type"><span class="bond-glyph">A ⇉ Sc</span><h3>Parallel</h3><p>Paths fan out, then merge or compete.</p></article>
+          <article class="bond-type"><span class="bond-glyph">A + B</span><h3>Together</h3><p>Both are present in the same assembly; no order implied.</p></article>
+          <article class="bond-type"><span class="bond-glyph">[ A ]</span><h3>Containment</h3><p>Sandbox, budget, or policy bounds action.</p></article>
+        </div>
+        <div class="bond-strength">
+          <strong>Topology is not strength.</strong>
+          <p>The same diagram can be a suggestion or a guarantee. Every bond in this guide carries one of three strengths—<code>~</code> advisory, unmarked coded, <code>!</code> enforced. Here is one formula, “act, observe, verify,” at all three:</p>
+          <div class="strength-demo" id="strength-demo"></div>
+        </div>
+        <p class="rules-title">Seven stability laws</p>
+        <div class="rules-grid">
+          <article class="rule"><span class="rule-number">01</span><div><h3>Close the loop</h3><p>Every loop needs action, observation, and a stop condition. Without all three, it is either a one-shot call or a runaway process.</p></div></article>
+          <article class="rule"><span class="rule-number">02</span><div><h3>Ground critique</h3><p>Critique bonds weakly to itself. Add <code>Vf[test]</code>, tool results, explicit scoring, or environmental evidence—or the system may merely rationalize its first answer.</p></div></article>
+          <article class="rule"><span class="rule-number">03</span><div><h3>Match control to consequence</h3><p>As blast radius rises, tools need stronger bonds to permissions, verification, approval, tracing, and rollback. Advisory bonds must harden into enforced ones.</p></div></article>
+          <article class="rule"><span class="rule-number">04</span><div><h3>Persist long horizons</h3><p>Long-running work needs external state, checkpoints, and compaction. Raw conversation history is not durable memory.</p></div></article>
+          <article class="rule"><span class="rule-number">05</span><div><h3>Budget branching</h3><p>Sampling, search, and delegation trade tokens and time for coverage. They need budgets and aggregation, not unlimited fan-out.</p></div></article>
+          <article class="rule"><span class="rule-number">06</span><div><h3>Evaluate the compound</h3><p>A molecule is only as good as its measured behavior. Evaluate the full trajectory, not just the final prose.</p></div></article>
+          <article class="rule"><span class="rule-number">07</span><div><h3>Quarantine untrusted input</h3><p>Everything an agent reads from the open world—web pages, tool results, files—is data, never instructions. Bond <code>Cn[trust]</code> and <code>Sb</code> around any Tool that touches it.</p></div></article>
+        </div>
+      </div>
+    </section>
+
+    <section id="groups">
+      <div class="shell">
+        <p class="sheet-tag">Sht 03 — Functional groups <small>· 11 subassemblies</small></p>
+        <div class="section-head">
+          <h2>Reusable behavior inside larger agents</h2>
+          <p class="section-intro">A functional group is a recurring cluster that confers characteristic behavior wherever it appears. Memory, skills, evaluation, and recovery belong here: important mechanisms whose internal composition should remain visible. <strong>Hover any square or glyph for its meaning.</strong></p>
+        </div>
+        <div class="taxonomy-ladder" aria-label="Composition ladder">
+          <article class="taxonomy-rung"><span>Smallest unit</span><h3>Atom</h3><p>One technique: Retrieve, Loop, Verify.</p></article>
+          <article class="taxonomy-rung"><span>Reusable subassembly</span><h3>Functional group</h3><p>A bounded loop or evidence gate inside many agents.</p></article>
+          <article class="taxonomy-rung"><span>Coherent runtime</span><h3>Molecule / compound</h3><p>One coding, research, or support agent.</p></article>
+          <article class="taxonomy-rung"><span>Multi-agent system</span><h3>Coordination complex</h3><p>An orchestrator bonded to specialist agents.</p></article>
+          <article class="taxonomy-rung"><span>Loosely coupled ecosystem</span><h3>Supramolecular assembly</h3><p>Independent agents held together by protocols and shared state.</p></article>
+        </div>
+        <div class="group-list" id="group-list"></div>
+        <p class="chemistry-note"><strong>Why “functional group” fits:</strong> it is not normally a free-standing molecule. It is a recognizable arrangement inside many different molecules, and it gives them characteristic behavior. That follows the <a href="https://goldbook.iupac.org/terms/view/F02555" target="_blank" rel="noreferrer">IUPAC definition</a> closely. “Compound” emphasizes that several element families are present; a <a href="https://goldbook.iupac.org/terms/view/C01330" target="_blank" rel="noreferrer">coordination entity</a> suggests an orchestrator surrounded by specialists; a <a href="https://goldbook.iupac.org/terms/view/09576" target="_blank" rel="noreferrer">supramolecular assembly</a> suggests autonomous agents coupled by weaker protocols.</p>
+      </div>
+    </section>
+
+    <section id="molecules">
+      <div class="shell">
+        <p class="sheet-tag">Sht 04 — Molecules &amp; compounds <small>· 10 patterns</small></p>
+        <div class="section-head">
+          <h2>Ten patterns you already recognize</h2>
+          <p class="section-intro">A molecule emphasizes one coherent runtime identity. A compound emphasizes that it draws atoms from several families. Most real agents are both. <strong>Hover any square for what that step does.</strong></p>
+        </div>
+        <aside class="howto" aria-label="How to read a formula">
+          <h3>How to read a formula</h3>
+          <ul>
+            <li>Colored squares are atoms; the color is the family. Hover one for its full name and what it does.</li>
+            <li>Brackets specialize an atom without minting a new one: <code>Cn[schema]</code> is Constrain applied to output shape.</li>
+            <li>Glyphs between squares are bonds. <code>+</code> means together—both present, no order implied.</li>
+            <li><code>~</code> marks an advisory bond (a prompt asks); <code>!</code> marks an enforced bond (the harness refuses to proceed without it); unmarked bonds are coded.</li>
+            <li>Formulas are schematic sketches read left to right—a map of what bonds to what, not an executable grammar.</li>
+          </ul>
+        </aside>
+        <div class="formula-key" aria-label="Bond notation key">
+          <span>→ Sequence</span><span>↺ Feedback</span><span>⊣ Gate</span><span>⊨ Evidence</span><span>— State</span><span>⇉ Parallel</span><span>+ Together</span><span>[ ] Containment</span><span>~ Advisory</span><span>! Enforced</span>
+        </div>
+        <div class="molecule-list" id="molecule-list"></div>
+      </div>
+    </section>
+
+    <section class="complexes-section" id="complexes">
+      <div class="shell">
+        <p class="sheet-tag">Sht 05 — Complexes &amp; assemblies <small>· the multi-agent layer</small></p>
+        <div class="section-head">
+          <h2>When molecules bond to molecules</h2>
+          <p class="section-intro"><strong>This is the multi-agent layer.</strong> What the literature calls a multi-agent system is, in this chemistry, a coordination complex: a central orchestrator bonded to specialist molecules. Ecosystems of independent agents—coupled by protocols and shared stores rather than a boss—are supramolecular assemblies. Dashed chips are whole molecules from Section IV, each running its own loop.</p>
+        </div>
+        <div class="complex-list" id="complex-list"></div>
+      </div>
+    </section>
+
+    <section id="layers">
+      <div class="shell">
+        <p class="sheet-tag">Sht 06 — Control radius <small>· prompt → context → harness</small></p>
+        <div class="section-head">
+          <h2>Atoms live in nested shells</h2>
+          <p class="section-intro">The families answer “what does this move do?” The shells answer “how much of the system does it control?” This connects the table to the Prompt → Context → Harness trilogy.</p>
+        </div>
+        <div class="layer-map">
+          <article class="layer"><span class="layer-num">Innermost shell</span><h3>Prompt</h3><p>Shapes one inference through specification, examples, decomposition, and constraints.</p></article>
+          <article class="layer"><span class="layer-num">Middle shell</span><h3>Context</h3><p>Shapes what the model can know through persistence, retrieval, compaction, and externalized working state.</p></article>
+          <article class="layer"><span class="layer-num">Outer shell</span><h3>Harness</h3><p>Shapes what the system can do over time through tools, loops, dispatch, verification, permissions, budgets, recovery, and termination.</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="appendix" id="appendix">
+      <div class="shell">
+        <p class="sheet-tag">Appendix A — Admission test <small>· how an idea earns a square</small></p>
+        <div class="section-head">
+          <h2>How an idea earns a square</h2>
+          <p class="section-intro">“Periodic table” is deliberately a metaphor: a compact field guide for families, composition, bonds, and recurring behavior—not a claim that agent engineering obeys a physical periodic law.</p>
+        </div>
+        <div class="appendix-grid">
+          <p class="appendix-question">I picked the elements by asking: <em>“What is the smallest reusable engineering move that can materially change an agent’s behavior?”</em></p>
+          <ol class="criteria-list">
+            <li>It is an operator: something the system does—not an artifact, implementation modality, trigger, or already-composed mechanism.</li>
+            <li>It has independent engineering meaning outside one particular framework.</li>
+            <li>It appears across several kinds of agents and task domains.</li>
+            <li>An engineer can deliberately add, remove, or modify it.</li>
+            <li>It combines naturally with other elements through recognizable bonds.</li>
+            <li>It is smaller than a known pattern such as RAG, ReAct, or a coding agent.</li>
+            <li>It answers exactly one question that no other element answers. Two atoms answering the same question would be one atom.</li>
+            <li>Together, the admitted elements cover elicitation, context, action, control, feedback, governance, and durability.</li>
+          </ol>
+        </div>
+        <div class="normalization-note">
+          <h3>Operators before artifacts</h3>
+          <p>The element names describe operations. Brackets specialize an operator without creating a new atom: Structure becomes <code>Cn[schema]</code>; Sampling becomes <code>Bh[sample]</code>; History becomes <code>Rt[history]</code>; Retry becomes <code>Lp[retry]</code>; Replan becomes <code>Pl[revise]</code>; Test becomes <code>Vf[test]</code>; and Reward becomes <code>Sc[reward]</code>. API, Browse, GUI, Code, and Message remain Tool modalities. Memory, Skill, and Evaluation move up to functional groups because each is already a composition. Select narrows to <code>Ds</code> Dispatch: handing control to the next capability, specialist, model, or workflow.</p>
+        </div>
+        <div class="normalization-note">
+          <h3>What changed in v0.5–0.6</h3>
+          <p><strong>Three atoms earned squares.</strong> The v0.4 table could not write a scheduler, a clarifying question, or a reduce step. <code>Wt</code> Wait covers suspending until a time, event, or condition—the move behind cron triggers, wakeups, and durable execution. <code>Ak</code> Ask covers eliciting missing information or a decision from a human, which is neither Approve (a gate) nor a Tool side effect. <code>Mg</code> Merge covers combining parallel results into one artifact—Branch fans out and Score ranks, but neither synthesizes.</p>
+          <p><strong>Three atoms moved.</strong> Trace joined Feedback: it records signals rather than setting policy. Checkpoint and Rollback joined Wait in the new Durability family, because surviving time, interruption, and failure is a different job from drawing boundaries. Governance now holds only true boundary-setters: Permission, Sandbox, Approve, Budget.</p>
+          <p><strong>Bonds gained strength.</strong> Topology alone under-determines behavior, so formulas now mark each load-bearing bond as advisory (<code>~</code>), coded (unmarked), or enforced (<code>!</code>). And position now carries meaning: within a row, control radius widens to the right; down the table, time horizons lengthen.</p>
+          <p><strong>Atoms became orthogonal by test, not by vibe.</strong> Every element now states the one question it answers—Dispatch: “what handles the next step?” (control stays in the same context); Delegate: “hand this to another agent?” (a new context, always). Plan is the operator; the plan it produces is an artifact stored via <code>Xt[plan]</code>. Persist stores information; Checkpoint stores a restart point for the run itself.</p>
+        </div>
+      </div>
+    </section>
+
+    <footer class="coda">
+      <div class="shell">
+        <blockquote>An agent is not an element. <em>It is the composition.</em></blockquote>
+        <dl class="title-block" aria-label="Drawing title block">
+          <div class="tb-cell"><dt>Project</dt><dd>Periodic Table of Agency</dd></div>
+          <div class="tb-cell"><dt>Drawn</dt><dd>V. Haldar + Codex</dd></div>
+          <div class="tb-cell"><dt>Checked</dt><dd>Claude</dd></div>
+          <div class="tb-cell"><dt>Reference</dt><dd><a href="https://harnesscourse.com" target="_blank" rel="noreferrer">harnesscourse.com</a></dd></div>
+          <div class="tb-cell"><dt>Date</dt><dd>Jul 2026</dd></div>
+          <div class="tb-cell"><dt>Rev</dt><dd>0.6</dd></div>
+        </dl>
+      </div>
+    </footer>
+  </main>
+
+  <div id="tooltip" role="tooltip" hidden><span class="tt-title"></span><span class="tt-body"></span></div>
+
+  <script>
+    const atoms = [
+      {n:1,s:'Sy',name:'Specify',family:'elicitation',shell:'Prompt',row:1,col:1,desc:'State the desired goal, role, outcome, or behavior for one model inference.',bonds:'Ex · Cn · Vf',variants:'goal · role · outcome'},
+      {n:2,s:'Ex',name:'Exemplify',family:'elicitation',shell:'Prompt',row:1,col:2,desc:'Demonstrate desired behavior with one or more input-output examples.',bonds:'Sy · Rt · Sc'},
+      {n:3,s:'Dc',name:'Decompose',family:'elicitation',shell:'Prompt',row:1,col:3,desc:'Break a difficult objective into smaller reasoning or execution units.',bonds:'Pl · Bh · Vf'},
+      {n:4,s:'Cn',name:'Constrain',family:'elicitation',shell:'Prompt',row:1,col:4,desc:'Restrict admissible scope, policy, output, or trust level for an inference.',bonds:'Sy · Vf · Pm',variants:'schema · grammar · policy · scope · trust'},
+
+      {n:5,s:'Rt',name:'Retrieve',family:'context',shell:'Context',row:2,col:2,desc:'Select and load relevant external information for the next model call.',bonds:'Ps · Cp · Vf',variants:'docs · history · memory · skill · data · code · policy'},
+      {n:6,s:'Cp',name:'Compact',family:'context',shell:'Context',row:2,col:3,desc:'Compress accumulated context while retaining decision-relevant information.',bonds:'Rt · Ps · Tr',variants:'history · evidence · state'},
+      {n:7,s:'Ps',name:'Persist',family:'context',shell:'Context',row:2,col:4,desc:'Write information to a durable store so later calls, sessions, or agents can recover it.',bonds:'Rt · Cp · Ck',variants:'state · memory · artifact'},
+      {n:8,s:'Xt',name:'Externalize',family:'context',shell:'Context',row:2,col:5,desc:'Represent current facts, plans, progress, and unresolved work outside the model.',bonds:'Lp · Ps · Ck',variants:'state · plan · task'},
+      {n:9,s:'Ak',name:'Ask',family:'context',shell:'Context',row:2,col:6,desc:'Pause to get missing information, a preference, or a decision from a human.',bonds:'Rt · Ap · Sp',variants:'clarify · prefer · confirm'},
+
+      {n:10,s:'Tl',name:'Tool',family:'action',shell:'Harness',row:3,col:4,desc:'Invoke an external capability through a tool contract. APIs, browsing, GUI control, code execution, and messaging are modalities of this element.',bonds:'Ds · Ob · Pm',variants:'api · browse · gui · code · msg'},
+
+      {n:11,s:'Lp',name:'Loop',family:'control',shell:'Harness',row:4,col:2,desc:'Repeat an action-observation cycle until a stopping rule fires.',bonds:'Ob · Sp · Bg',variants:'retry · iterate · poll'},
+      {n:12,s:'Pl',name:'Plan',family:'control',shell:'Harness',row:4,col:3,desc:'Decide and revise the steps, dependencies, and progress toward an objective. Planning is the operator; the plan it produces is an artifact, stored via Xt[plan].',bonds:'Xt · Ob · Ds',variants:'create · revise'},
+      {n:13,s:'Ds',name:'Dispatch',family:'control',shell:'Harness',row:4,col:4,desc:'Hand the next step to the right capability, model, or workflow. Dispatch never creates a new context—control returns to the same loop.',bonds:'Rt · Tl · Dl'},
+      {n:14,s:'Bh',name:'Branch',family:'control',shell:'Harness',row:4,col:5,desc:'Produce and explore alternative candidates or trajectories before selection.',bonds:'Dc · Sc · Bg',variants:'sample · search · fan-out'},
+      {n:15,s:'Mg',name:'Merge',family:'control',shell:'Harness',row:4,col:6,desc:'Combine parallel results into a single artifact, answer, or decision.',bonds:'Bh · Sc · Dl',variants:'synthesize · reduce · reconcile'},
+      {n:16,s:'Dl',name:'Delegate',family:'control',shell:'Harness',row:4,col:7,desc:'Hand a bounded subproblem to another agent. Delegate always creates a new context—a fresh loop with its own state, contract, and budget.',bonds:'Dc · Xt · Sc'},
+      {n:17,s:'Sp',name:'Stop',family:'control',shell:'Harness',row:4,col:8,desc:'Terminate successfully, safely, or explicitly blocked.',bonds:'Lp · Vf · Bg'},
+
+      {n:18,s:'Ob',name:'Observe',family:'feedback',shell:'Harness',row:5,col:3,desc:'Read the environment after an action and turn the resulting change into context.',bonds:'Tl · Lp · Pl'},
+      {n:19,s:'Vf',name:'Verify',family:'feedback',shell:'Harness',row:5,col:4,desc:'Check a claim or artifact against independent evidence, an oracle, or invariants.',bonds:'Ob · Sc · Sp',variants:'test · oracle · cross-check · human'},
+      {n:20,s:'Cr',name:'Critique',family:'feedback',shell:'Harness',row:5,col:5,desc:'Diagnose a trajectory and propose a revision using available evidence.',bonds:'Vf · Tr · Pl'},
+      {n:21,s:'Sc',name:'Score',family:'feedback',shell:'Harness',row:5,col:6,desc:'Assign criteria-based value, rank, or preference to candidates and outcomes.',bonds:'Bh · Vf · Ds',variants:'rank · judge · reward'},
+      {n:22,s:'Tr',name:'Trace',family:'feedback',shell:'Harness',row:5,col:7,desc:'Record inputs, decisions, tool calls, outputs, and state transitions.',bonds:'Ob · Sc · Ck'},
+
+      {n:23,s:'Pm',name:'Permission',family:'governance',shell:'Harness',row:6,col:4,desc:'Limit which capabilities and resources are available in a given state.',bonds:'Tl · Sb · Ap'},
+      {n:24,s:'Sb',name:'Sandbox',family:'governance',shell:'Harness',row:6,col:5,desc:'Contain execution so failures and attacks cannot cross a boundary.',bonds:'Tl · Pm · Rb'},
+      {n:25,s:'Ap',name:'Approve',family:'governance',shell:'Harness',row:6,col:6,desc:'Pause for a human decision before a consequential action.',bonds:'Pm · Tl · Ak'},
+      {n:26,s:'Bg',name:'Budget',family:'governance',shell:'Harness',row:6,col:7,desc:'Bound tokens, money, latency, fan-out, retries, or wall-clock time.',bonds:'Lp · Bh · Sp'},
+
+      {n:27,s:'Wt',name:'Wait',family:'durability',shell:'Harness',row:7,col:5,desc:'Suspend work until a time, event, or condition arrives, then resume from saved state.',bonds:'Lp · Ck · Bg',variants:'schedule · event · backoff'},
+      {n:28,s:'Ck',name:'Checkpoint',family:'durability',shell:'Harness',row:7,col:6,desc:'Save a known-good, resumable state of the run itself. Persist stores information; Checkpoint stores a restart point.',bonds:'Xt · Tr · Rb'},
+      {n:29,s:'Rb',name:'Rollback',family:'durability',shell:'Harness',row:7,col:7,desc:'Restore a prior safe state after a bad or partial change.',bonds:'Ck · Vf · Sb'}
+    ];
+
+    const references = {
+      Sy:{course:['Prompting foundations','https://harnesscourse.com/#p1'],paper:['Building Effective Agents','https://www.anthropic.com/engineering/building-effective-agents']},
+      Ex:{course:['Few-shot & exemplars','https://harnesscourse.com/#p3'],paper:['Prompt order sensitivity','https://arxiv.org/abs/2104.08786']},
+      Dc:{course:['Reasoning & decomposition','https://harnesscourse.com/#p5'],paper:['Tree of Thoughts','https://arxiv.org/abs/2305.10601']},
+      Cn:{course:['Structured output','https://harnesscourse.com/#p8'],paper:['JSONSchemaBench','https://arxiv.org/abs/2501.10868']},
+      Ps:{course:['Memory representations','https://harnesscourse.com/#c5'],paper:['MemGPT','https://arxiv.org/abs/2310.08560']},
+      Rt:{course:['Retrieval-augmented generation','https://harnesscourse.com/#c3'],paper:['The RAG paper','https://arxiv.org/abs/2005.11401']},
+      Cp:{course:['Compression & compaction','https://harnesscourse.com/#c6'],paper:['Agentic Context Engineering','https://arxiv.org/abs/2510.04618']},
+      Xt:{course:['Memory & state externalization','https://harnesscourse.com/#h5'],paper:['Externalization in LLM Agents','https://arxiv.org/abs/2604.08224']},
+      Ak:{course:['Human approval contracts','https://harnesscourse.com/#h9'],paper:['CLAM: selective clarification','https://arxiv.org/abs/2212.07769']},
+      Tl:{course:['Tool use as action space','https://harnesscourse.com/#h3'],paper:['ReAct','https://arxiv.org/abs/2210.03629']},
+      Lp:{course:['The agent loop','https://harnesscourse.com/#h2'],paper:['ReAct','https://arxiv.org/abs/2210.03629']},
+      Pl:{course:['Planning & orchestration','https://harnesscourse.com/#h4'],paper:['Building Effective Agents','https://www.anthropic.com/engineering/building-effective-agents']},
+      Ds:{course:['Planning & routing','https://harnesscourse.com/#h4'],paper:['Building Effective Agents','https://www.anthropic.com/engineering/building-effective-agents']},
+      Bh:{course:['Planning & branching','https://harnesscourse.com/#h4'],paper:['Tree of Thoughts','https://arxiv.org/abs/2305.10601']},
+      Mg:{course:['Planning & orchestration','https://harnesscourse.com/#h4'],paper:['Mixture-of-Agents','https://arxiv.org/abs/2406.04692']},
+      Dl:{course:['Orchestrator-workers','https://harnesscourse.com/#h4'],paper:['Multi-agent research system','https://www.anthropic.com/engineering/multi-agent-research-system']},
+      Sp:{course:['The agent loop','https://harnesscourse.com/#h2'],paper:['Building Effective Agents','https://www.anthropic.com/engineering/building-effective-agents']},
+      Ob:{course:['The agent loop','https://harnesscourse.com/#h2'],paper:['ReAct','https://arxiv.org/abs/2210.03629']},
+      Vf:{course:['Reflection & verifiers','https://harnesscourse.com/#h7'],paper:['Cannot Self-Correct Yet','https://arxiv.org/abs/2310.01798']},
+      Cr:{course:['Reflection & self-correction','https://harnesscourse.com/#h7'],paper:['Reflexion','https://arxiv.org/abs/2303.11366']},
+      Sc:{course:['Evaluation & benchmarks','https://harnesscourse.com/#h11'],paper:['Rigorous agent benchmarks','https://arxiv.org/abs/2507.02825']},
+      Tr:{course:['Observability & tracing','https://harnesscourse.com/#h10'],paper:['OpenInference','https://github.com/Arize-ai/openinference']},
+      Pm:{course:['Safety & permissions','https://harnesscourse.com/#h8'],paper:['AgentDojo','https://arxiv.org/abs/2406.13352']},
+      Sb:{course:['Safety & sandboxing','https://harnesscourse.com/#h8'],paper:['AgentDojo','https://arxiv.org/abs/2406.13352']},
+      Ap:{course:['Human approval contracts','https://harnesscourse.com/#h9'],paper:['Approval pattern taxonomy','https://mastra.ai/blog/hitl-where-to-put-approval-in-agents-and-workflows']},
+      Bg:{course:['Planning & orchestration','https://harnesscourse.com/#h4'],paper:['Trajectory alignment','https://arxiv.org/abs/2605.21516']},
+      Wt:{course:['The agent loop','https://harnesscourse.com/#h2'],paper:['Durable execution','https://docs.temporal.io/evaluate/understanding-temporal']},
+      Ck:{course:['Memory & state','https://harnesscourse.com/#h5'],paper:['Continuum Memory','https://arxiv.org/abs/2601.09913']},
+      Rb:{course:['Safety & containment','https://harnesscourse.com/#h8'],paper:['LlamaFirewall','https://arxiv.org/abs/2505.03574']}
+    };
+    atoms.forEach(atom => Object.assign(atom, references[atom.s]));
+
+    // The orthogonality test: every atom answers exactly one question
+    // that no other atom answers.
+    const questions = {
+      Sy:'What should this inference produce?',
+      Ex:'What does a good answer look like?',
+      Dc:'What smaller problems make up this one?',
+      Cn:'What is out of bounds?',
+      Rt:'What does the model need to see right now?',
+      Cp:'What can be forgotten without losing the decision?',
+      Ps:'What must outlive this session?',
+      Xt:'What is the current state of the work?',
+      Ak:'What does only the human know?',
+      Tl:'What can the system do beyond generating text?',
+      Lp:'Do it again?',
+      Pl:'What steps, in what order?',
+      Ds:'What handles the next step?',
+      Bh:'Explore several candidates?',
+      Mg:'Combine what came back?',
+      Dl:'Hand this to another agent?',
+      Sp:'Are we done?',
+      Ob:'What actually happened?',
+      Vf:'Is the claim true?',
+      Cr:'What went wrong, and what should change?',
+      Sc:'Which is better?',
+      Tr:'What did the system do, exactly?',
+      Pm:'What is this allowed to use?',
+      Sb:'What can a failure reach?',
+      Ap:'Should a human sign off first?',
+      Bg:'How much may this cost?',
+      Wt:'When should work resume?',
+      Ck:'Where can the run resume from?',
+      Rb:'How do we get back to safe?'
+    };
+    atoms.forEach(atom => atom.q = questions[atom.s]);
+
+    const functionalGroups = [
+      {notation:['Tl','→','Ob','↺','Lp','→','Sp'],name:'Bounded action loop',desc:'Act, observe, update, and repeat—but only while an explicit stopping rule permits it.'},
+      {notation:['Ob','⊨','Vf:test','⊣!','Sp'],name:'Evidence gate',desc:'Completion is blocked until an observation survives an independent verifier. The gate must be enforced, not asked for.'},
+      {notation:['[','Tl',']','+','Pm','+','Sb','+','Bg','+','Ap','⊣!','Tl'],name:'Safety envelope',desc:'Contain a tool, restrict its capability and resources, and hard-gate consequential paths.'},
+      {notation:['Ps:memory','—','Rt:memory','→','Cp','→','Ck'],name:'Durable memory',desc:'Memory emerges from persisted information that can be retrieved, compacted, and checkpointed.'},
+      {notation:['Rt:skill','→','(','Sy','+','Ex','+','Tl',')'],name:'Skill package',desc:'A skill loads reusable specification, examples, references, and tool procedures just in time.'},
+      {notation:['Dc','→','Bh:search','⇉','Dl','→','Sc','→','Mg'],name:'Search fan-out',desc:'Decompose, explore alternative paths, delegate bounded work, score what comes back, and merge the survivors.'},
+      {notation:['Ck','—','Ob','→','Wt:backoff','→','Lp:retry','↺','Ob','→','Rb'],name:'Recovery pack',desc:'Back off and retry transient failures against observed state; roll back when recovery cannot preserve correctness.'},
+      {notation:['Ds','→','(','Rt:history','+','Rt:skill','+','Cp',')'],name:'Context loader',desc:'Dispatch to the smallest useful bundle of retrieved history, skills, and compacted context.'},
+      {notation:['Bh:tasks','⇉','Lp','→','Tr','→','Sc','→','Vf'],name:'Evaluation rig',desc:'Run representative tasks, capture trajectories, score outcomes, and verify the measurement.'},
+      {notation:['Tr','→','Cr','→','Tl:code','→','Vf:test','⊣!','Ck'],name:'Improvement ratchet',desc:'Turn traces into bounded changes; accept only candidates that pass held-out verification.'},
+      {notation:['Tl:browse','→','Ob','→','Cn:trust','+','Sb'],name:'Input quarantine',desc:'Treat everything read from the open world as data, never instructions; contain any path it can influence.'}
+    ];
+
+    const molecules = [
+      {kind:'Foundational compound',name:'Reliable tool call',notation:[['Sy','→','Tl','→','Ob','⊨','Vf','⊣!','Sp']],desc:'Specify a bounded action, invoke the capability, observe what happened, verify the result, then stop. This is the smallest useful action loop.',warning:'Without Ob, the system confuses an attempted action with a completed one.'},
+      {kind:'Classic agent loop',name:'ReAct operator',notation:[['Sy','→','Lp','→','Tl','→','Ob','↺','Lp'],['Lp','—','Xt:state','→','Sp']],desc:'Reason about externalized state, act through a tool, observe the environment, update state, and repeat until the termination condition is satisfied.',warning:'Lp must bond to both Ob and Sp, or the loop is blind or unbounded.'},
+      {kind:'Production compound',name:'Coding agent',notation:[['Rt:skill','+','Rt:code','→','Pl','→','Lp','→','Tl:code','⊨!','Vf:test','↺','Lp:retry'],['[','Tl:code',']','+','Pm','+','Sb','+','Ap','⊣!','Tl:code','—','Tr']],desc:'Loads repository guidance and code context, plans edits, executes code changes, verifies with tests the harness insists on, retries bounded failures, and hard-gates risky actions.',warning:'High consequence: add Ck + Rb for migrations, deploys, or large mechanical edits.'},
+      {kind:'Knowledge compound',name:'Deep researcher',notation:[['Ak:clarify','→','Dc','→','Bh:search','⇉','Tl:browse','→','Sc','⊨','Vf'],['[','Rt:docs','+','Dl',']','→','Mg:evidence','—','Tr','+','Vf','⊣','Sp']],desc:'Clarifies the question first, decomposes it, searches several evidence paths, delegates bounded investigations, scores source quality, verifies claims, and merges the evidence into one answer.',warning:'More sources do not help if they all repeat the same unsupported claim.'},
+      {kind:'Human-gated compound',name:'Approval-gated publisher',notation:[['Rt:skill','+','Rt:sources','→','Tl:msg','⊨','Vf'],['[','Tl:msg',']','+','Pm','+','Ap','⊣!','Tl:msg','—','Tr'],['Vf','⊣','Sp']],desc:'Loads guidance and source material, prepares a public message, pauses before the side effect, verifies final text, records the action, and stops.',warning:'The approval bond must be enforced and must gate the actual side effect—not merely a preview step.'},
+      {kind:'Analytical compound',name:'Data analyst',notation:[['Sy','→','Rt:data','→','Tl:code','→','Vf:test','→','Sc'],['Sc','—','Tr','+','Vf','⊣','Sp']],desc:'Retrieves data and definitions, computes with code, verifies transformations, scores anomalies, and preserves an auditable trace.',warning:'Keep numerical computation in Tl[code]; do not ask prose generation to impersonate a calculator.'},
+      {kind:'Service compound',name:'Support resolver',notation:[['Rt:policy','+','Ps:case','—','Xt:state','→','Tl:api','→','Ob','⊨','Vf'],['[','Tl:api',']','+','Pm','+','Ap','⊣!','Tl:api','+','Vf','⊣','Sp']],desc:'Retrieves policy, persists the case, externalizes current state, uses scoped APIs, observes account state, and hard-gates sensitive remedies.',warning:'Customer history is context, not permission. Pm and Ap remain separate bonds.'},
+      {kind:'Embodied web compound',name:'Browser operator',notation:[['Sy','→','Tl:browse','→','Tl:gui','→','Ob','↺','Lp:retry'],['[','Tl:gui',']','+','Pm','+','Ap','⊣!','Tl:gui','—','Tr'],['Ob','→','Cn:trust','+','Sb']],desc:'Navigates live interfaces, observes each transition, retries brittle actions, asks before consequential clicks, records the trajectory, and quarantines everything the page says.',warning:'UI text is untrusted input. The Cn[trust] + Sb group is load-bearing, not optional.'},
+      {kind:'Long-horizon compound',name:'Durable operator',notation:[['Pl','—','Xt:state','→','Lp','→','Tl','→','Ob','↺','Lp'],['Cp:history','—','Ck','—','Wt:schedule','→','Lp:retry','→','Rb'],['[','Bg',']','⊣','Lp','+','Vf','⊣','Sp']],desc:'Carries explicit plan and state across many cycles, compacts history, checkpoints progress, sleeps until the next trigger, stays within budget, and recovers from partial failure.',warning:'Without Ck and Wt, long-running work is merely a long conversation.'},
+      {kind:'Adaptive compound',name:'Self-improving harness',notation:[['Tr','→','Sc','→','Cr','→','Tl:code','→','Vf:test','⊣!','Ck'],['Ck','→','Rb']],desc:'Mines traces, scores failures, critiques the harness, proposes bounded code changes, verifies candidates against a hard gate, retains known-good versions, and can roll back.',warning:'Critique is not improvement. The compound needs held-out evaluation and regression gates.'}
+    ];
+
+    const complexes = [
+      {kind:'Coordination complex',name:'Orchestrator–workers',notation:[['Pl','→','Dc','→','Dl','⇉','{Worker}','{Worker}','{Worker}'],['{Worker}','→','Mg','→','Sc','⊨','Vf','⊣','Sp'],['[','Bg',']','⊣','Dl']],desc:'A lead agent plans, decomposes, and delegates bounded subtasks to worker molecules, then merges what returns, scores it, and verifies before finishing.',wild:'Claude Code subagents and Workflows · Anthropic’s multi-agent research system · LangGraph supervisor graphs.',warning:'Workers inherit nothing implicitly. Each delegation needs its own Sy, Cn, and Bg—or fan-out multiplies confusion instead of coverage.'},
+      {kind:'Coordination complex',name:'Generator–judge panel',notation:[['Bh','⇉','{Generator}','{Generator}','{Generator}'],['{Generator}','→','Sc:judge','⇉','Sc:judge','→','Mg:synthesize']],desc:'Independent generator molecules attack the same problem from different angles; independent judges score the candidates; a merge step synthesizes the winner with the best ideas from the runners-up.',wild:'Best-of-N sampling with LLM judges · arena-style evaluation · ensemble synthesis à la Mixture-of-Agents.',warning:'Judges sampled from the same model share the generators’ blind spots. Give each judge a different lens or independent evidence.'},
+      {kind:'Coordination complex',name:'Specialist pipeline',notation:[['{Intake}','→','{Analyst}','→','{Writer}','⊨','Vf','⊣!','Ap']],desc:'Whole molecules chained by sequence bonds—each specialist consumes the previous one’s artifact—with verification and a hard human gate before anything leaves the pipeline.',wild:'Role-based crews · research → draft → edit → publish content chains with human sign-off.',warning:'Errors compound down a pipeline. Verify at every molecule boundary, not only at the end.'},
+      {kind:'Supramolecular assembly',name:'Shared-state ecosystem',notation:[['{Agent}','—','Ps:shared','—','{Agent}'],['[','Cn:protocol','+','Pm','+','Tr',']']],desc:'Autonomous agents with no orchestrator, coupled only through durable shared state and agreed protocols—task queues, shared memory stores, or standardized interfaces.',wild:'Agents coupled through MCP servers · A2A-style protocols · shared task queues and blackboard stores.',warning:'With no center, governance must live in the protocol and the store: per-agent permissions, budgets, and traces.'}
+    ];
+
+    const grid = document.querySelector('#periodic-grid');
+    const detail = document.querySelector('#element-detail');
+    const filterStatus = document.querySelector('#filter-status');
+    const atomBySymbol = Object.fromEntries(atoms.map(a => [a.s, a]));
+
+    atoms.forEach((atom, i) => {
+      const button = document.createElement('button');
+      button.className = `element family-${atom.family}`;
+      button.style.setProperty('--row', atom.row);
+      button.style.setProperty('--col', atom.col);
+      button.style.setProperty('--i', i);
+      button.dataset.family = atom.family;
+      button.dataset.symbol = atom.s;
+      button.setAttribute('aria-label', `${atom.name}, ${atom.family} family, ${atom.shell} shell`);
+      button.innerHTML = `<span class="atomic-number">${String(atom.n).padStart(2,'0')}</span><span class="element-symbol">${atom.s}</span><span class="element-name">${atom.name}</span><span class="element-shell">${atom.shell}</span>`;
+      button.addEventListener('click', () => showAtom(atom, button));
+      grid.appendChild(button);
+    });
+
+    function showAtom(atom, button) {
+      document.querySelectorAll('.element').forEach(el => el.classList.remove('is-selected'));
+      button.classList.add('is-selected');
+      detail.innerHTML = `<span class="corner tl"></span><span class="corner tr"></span><span class="corner bl"></span><span class="corner br"></span><div class="detail-symbol">${atom.s}</div><div class="detail-copy"><h3>${atom.name}</h3><p class="detail-question">Answers: “${atom.q}”</p><p>${atom.desc}</p><div class="detail-meta"><span>${atom.family} family</span><span>${atom.shell} shell</span><span>Bonds with ${atom.bonds}</span>${atom.variants ? `<span>Modalities ${atom.variants}</span>` : ''}</div><div class="detail-links"><a href="${atom.course[1]}" target="_blank" rel="noreferrer">Course · ${atom.course[0]} ↗</a><a href="${atom.paper[1]}" target="_blank" rel="noreferrer">Reading · ${atom.paper[0]} ↗</a></div></div>`;
+    }
+
+    showAtom(atoms[0], grid.querySelector('.element'));
+
+    const familyCopy = {
+      elicitation:'Moves that shape or constrain a model inference.',
+      context:'Moves that decide what the model can know and attend to.',
+      action:'Ways the system changes or inspects its environment.',
+      control:'The scheduler’s instruction set: each atom is one answer to “what happens next?”',
+      feedback:'Signals that measure, record, correct, or select behavior.',
+      governance:'Boundaries that keep agency legible and contained.',
+      durability:'Moves that let long work survive time, interruption, and failure.'
+    };
+
+    document.querySelectorAll('.filter').forEach(button => {
+      button.addEventListener('click', () => {
+        const family = button.dataset.filter;
+        document.querySelectorAll('.filter').forEach(item => item.setAttribute('aria-pressed', String(item === button)));
+        grid.classList.toggle('is-filtered', family !== 'all');
+        document.querySelectorAll('.element').forEach(el => { el.hidden = family !== 'all' && el.dataset.family !== family; });
+        const visibleAtoms = family === 'all' ? atoms : atoms.filter(atom => atom.family === family);
+        filterStatus.innerHTML = family === 'all'
+          ? '<span>Showing the full periodic arrangement.</span><strong>29 elements</strong>'
+          : `<span>${familyCopy[family]}</span><strong>${visibleAtoms.length} ${family} ${visibleAtoms.length === 1 ? 'element' : 'elements'}</strong>`;
+        const first = grid.querySelector('.element:not([hidden])');
+        showAtom(atomBySymbol[first.dataset.symbol], first);
+      });
+    });
+
+    /* ---------- notation renderer with tooltip data ---------- */
+    const bondTokenMeta = {
+      '→':['sequence','Sequence','Output feeds the next step.'],
+      '↺':['feedback','Feedback','Observation changes the next cycle.'],
+      '⊣':['gate','Gate','The left side can block the right side.'],
+      '⊨':['evidence','Evidence','The left side must satisfy the right-side check.'],
+      '—':['state','State','Information persists across the connection.'],
+      '⇉':['parallel','Parallel','Work fans out or competes.'],
+      '+':['together','Together','Both present in the same assembly; no order implied.'],
+      '[':['containment','Containment','A boundary begins: sandbox, budget, or policy bounds what is inside.'],
+      ']':['containment','Containment','The boundary ends.']
+    };
+    const strengthMeta = {
+      '~':['is-advisory','advisory','A prompt asks for it; the model may comply.'],
+      '!':['is-enforced','enforced','The harness refuses to proceed without it.']
+    };
+    const esc = s => s.replace(/"/g, '&quot;');
+
+    function renderNotation(notation, compact) {
+      return notation.map(row => {
+        let k = 0;
+        const tokens = row.map(token => {
+          if (token.startsWith('{')) {
+            const label = token.slice(1, -1);
+            return `<span class="molecule-chip" data-tt-t="${esc(label)} · molecule" data-tt-b="A whole agent molecule from Section IV, running its own loop and acting here as one unit.">${label}</span>`;
+          }
+          const [symbol, variant] = token.split(':');
+          const atom = atomBySymbol[symbol];
+          if (atom) {
+            const t = variant ? `${atom.name} [${variant}]` : `${String(atom.n).padStart(2,'0')} · ${atom.name}`;
+            const b = atom.desc + (variant ? ` Here specialized to “${variant}.”` : '');
+            if (variant) return `<span class="formula-atom has-variant family-${atom.family}" data-tt-t="${esc(t)}" data-tt-b="${esc(b)}"><span>${symbol}</span><small>[${variant}]</small></span>`;
+            return `<span class="formula-atom family-${atom.family}" data-tt-t="${esc(t)}" data-tt-b="${esc(b)}">${token}</span>`;
+          }
+          const last = token.at(-1);
+          const strength = strengthMeta[last];
+          const glyph = strength ? token.slice(0, -1) : token;
+          const bond = bondTokenMeta[glyph];
+          if (bond) {
+            const cls = strength ? ` ${strength[0]}` : '';
+            const t = `${bond[1]} bond${strength ? ' · ' + strength[1] : ''}`;
+            const b = bond[2] + (strength ? ` ${strength[2]}` : ' Coded: the harness performs it every time.');
+            const mark = strength ? `${glyph}<sup>${last}</sup>` : glyph;
+            return `<span class="bond-symbol${cls}" style="--k:${k++}" data-bond="${bond[0]}" data-tt-t="${esc(t)}" data-tt-b="${esc(b)}" aria-label="${esc(t + ': ' + b)}">${mark}</span>`;
+          }
+          return `<span class="formula-mark" aria-hidden="true">${token}</span>`;
+        }).join('');
+        return `<div class="formula-line">${tokens}</div>`;
+      }).join('');
+    }
+
+    const strengthDemo = document.querySelector('#strength-demo');
+    [
+      {label:'~ Advisory',caption:'The prompt says “verify your answer.” The model may comply—or rationalize.',notation:[['Tl','→','Ob','⊨~','Vf']]},
+      {label:'Coded',caption:'The harness runs the check after every action, automatically.',notation:[['Tl','→','Ob','⊨','Vf']]},
+      {label:'! Enforced',caption:'The harness refuses to finish until the check passes. Same topology, different guarantee.',notation:[['Tl','→','Ob','⊨!','Vf','⊣!','Sp']]}
+    ].forEach(row => {
+      const div = document.createElement('div');
+      div.className = 'strength-row';
+      div.innerHTML = `<span class="strength-label">${row.label}<em>${row.caption}</em></span><div class="formula" style="margin:0">${renderNotation(row.notation)}</div>`;
+      strengthDemo.appendChild(div);
+    });
+
+    const displayToken = token => {
+      if (token.startsWith('{')) return token.slice(1, -1);
+      return token.includes(':') ? `${token.split(':')[0]}[${token.split(':')[1]}]` : token;
+    };
+
+    const groupList = document.querySelector('#group-list');
+    functionalGroups.forEach((group, index) => {
+      const article = document.createElement('article');
+      article.className = 'functional-group';
+      const label = group.notation.map(displayToken).join(' ');
+      article.innerHTML = `<span class="group-id">FG-${String(index + 1).padStart(2,'0')}</span><div class="formula formula--compact" aria-label="Bond formula: ${esc(label)}">${renderNotation([group.notation], true)}</div><h3>${group.name}</h3><p>${group.desc}</p>`;
+      groupList.appendChild(article);
+    });
+
+    const moleculeList = document.querySelector('#molecule-list');
+    molecules.forEach((molecule, index) => {
+      const article = document.createElement('article');
+      article.className = 'molecule';
+      const formulaLabel = molecule.notation.map(row => row.map(displayToken).join(' ')).join('; ');
+      article.innerHTML = `<span class="molecule-index">M-${String(index + 1).padStart(2,'0')}</span><p class="molecule-kind">${molecule.kind}</p><h3>${molecule.name}</h3><div class="formula" aria-label="Bond formula: ${esc(formulaLabel)}">${renderNotation(molecule.notation)}</div><p>${molecule.desc}</p><p class="warning">${molecule.warning}</p>`;
+      moleculeList.appendChild(article);
+    });
+
+    const complexList = document.querySelector('#complex-list');
+    complexes.forEach((complex, index) => {
+      const article = document.createElement('article');
+      article.className = 'molecule';
+      const formulaLabel = complex.notation.map(row => row.map(displayToken).join(' ')).join('; ');
+      article.innerHTML = `<span class="molecule-index">C-${String(index + 1).padStart(2,'0')}</span><p class="molecule-kind">${complex.kind}</p><h3>${complex.name}</h3><div class="formula" aria-label="Bond formula: ${esc(formulaLabel)}">${renderNotation(complex.notation)}</div><p>${complex.desc}</p><p class="wild">${complex.wild}</p><p class="warning">${complex.warning}</p>`;
+      complexList.appendChild(article);
+    });
+
+    /* ---------- shared tooltip ---------- */
+    const tt = document.querySelector('#tooltip');
+    const ttTitle = tt.querySelector('.tt-title');
+    const ttBody = tt.querySelector('.tt-body');
+    let ttTarget = null;
+
+    function showTip(el) {
+      ttTarget = el;
+      ttTitle.textContent = el.dataset.ttT;
+      ttBody.textContent = el.dataset.ttB;
+      tt.hidden = false;
+      const r = el.getBoundingClientRect();
+      const w = tt.offsetWidth, h = tt.offsetHeight;
+      let x = r.left + r.width / 2 - w / 2;
+      x = Math.max(8, Math.min(x, window.innerWidth - w - 8));
+      let y = r.top - h - 10;
+      if (y < 8) y = r.bottom + 10;
+      tt.style.left = x + 'px';
+      tt.style.top = y + 'px';
+      tt.classList.add('is-visible');
+    }
+    function hideTip() {
+      ttTarget = null;
+      tt.classList.remove('is-visible');
+      tt.hidden = true;
+    }
+    document.addEventListener('pointerover', e => {
+      const el = e.target.closest('[data-tt-t]');
+      if (el) showTip(el);
+      else if (ttTarget) hideTip();
+    });
+    document.addEventListener('pointerdown', e => {
+      const el = e.target.closest('[data-tt-t]');
+      if (el && el !== ttTarget) showTip(el);
+      else if (!el) hideTip();
+    });
+    window.addEventListener('scroll', () => { if (ttTarget) showTip(ttTarget); }, { passive: true });
+
+    // Re-align deep links after web fonts settle; otherwise the browser can land
+    // between sections when the display typeface changes the page height.
+    if (location.hash) {
+      Promise.race([
+        document.fonts.ready,
+        new Promise(resolve => setTimeout(resolve, 400))
+      ]).then(() => requestAnimationFrame(() => {
+        document.querySelector(location.hash)?.scrollIntoView();
+      }));
+    }
+  </script>
+</body>
+</html>
