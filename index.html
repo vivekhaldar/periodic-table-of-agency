@@ -116,6 +116,19 @@
     .hero-name { position: absolute; bottom: .75rem; left: .9rem; font: 600 .78rem var(--mono); letter-spacing: .12em; text-transform: uppercase; }
     .hero-mass { position: absolute; bottom: .8rem; right: .9rem; font: italic 400 .85rem var(--serif); color: var(--dim); }
 
+    .run-callout {
+      display: grid; gap: 1rem; align-items: center;
+      margin-bottom: clamp(2.5rem, 5vw, 4rem); padding: clamp(1.2rem, 3vw, 1.8rem);
+      background: var(--amber); color: var(--bg); text-decoration: none;
+      transition: transform 160ms var(--ease), box-shadow 160ms var(--ease);
+    }
+    .run-callout:hover { transform: translate(-3px, -3px); box-shadow: 6px 6px 0 var(--alert); }
+    .run-callout-kicker { margin: 0 0 .4rem; font: 600 .64rem var(--mono); letter-spacing: .14em; text-transform: uppercase; opacity: .7; }
+    .run-callout-title { margin: 0 0 .5rem; font: 800 clamp(1.9rem, 5vw, 3.4rem)/.9 var(--display); text-transform: uppercase; }
+    .run-callout-title em { font-style: normal; color: var(--alert); }
+    .run-callout-lede { max-width: 56ch; margin: 0; font: 400 1rem/1.45 var(--serif); opacity: .85; }
+    .run-callout-cta { justify-self: start; padding: .8rem 1.1rem; border: 2px solid var(--bg); font: 600 .74rem var(--mono); letter-spacing: .1em; text-transform: uppercase; white-space: nowrap; }
+    @media (min-width: 760px) { .run-callout { grid-template-columns: 1fr auto; } .run-callout-cta { justify-self: end; } }
     .thesis { display: grid; gap: 0; border-block: 1px solid var(--line); }
     .thesis-item { padding: 1.4rem 0; border-bottom: 1px solid var(--line-soft); }
     .thesis-item:last-child { border-bottom: 0; }
@@ -254,6 +267,7 @@
     .formula--compact .formula-atom { width: 2.1rem; font-size: .74rem; }
     .formula--compact .formula-atom.has-variant { width: auto; min-width: 2.9rem; height: 2.1rem; }
     .molecule-chip { display: inline-flex; flex: 0 0 auto; align-items: center; height: 2.5rem; padding-inline: .6rem; border: 1px dashed var(--dim); color: var(--dim); font: 600 .68rem var(--mono); letter-spacing: .04em; text-transform: uppercase; cursor: help; }
+    .formula-opt { display: inline-flex; flex: 0 0 auto; align-items: center; height: 2.5rem; color: var(--dim); font: 500 .68rem var(--mono); letter-spacing: .01em; cursor: help; }
     .bond-symbol { display: grid; flex: 0 0 auto; min-width: 1.3rem; place-items: center; color: var(--amber); font: 600 1.15rem/1 var(--mono); cursor: help; animation: signal 4.2s var(--ease) infinite; animation-delay: calc(var(--k, 0) * 300ms); }
     @keyframes signal { 0%, 100% { opacity: .5; } 5%, 11% { opacity: 1; } 16% { opacity: .5; } }
     .bond-symbol[data-bond="gate"] { color: var(--f-governance); }
@@ -399,7 +413,7 @@
   <a class="skip-link" href="#main">Skip to the periodic table</a>
   <header class="shell masthead">
     <a class="brand" href="#top" aria-label="The Periodic Table of Agency home"><span class="brand-mark">Ag</span><span>Periodic Table<br>of Agency</span></a>
-    <nav aria-label="Page sections"><a href="#table">Atoms</a><a href="#bonds">Bonds</a><a href="#groups">Groups</a><a href="#molecules">Compounds</a><a href="#complexes">Complexes</a><a href="#appendix">Appendix</a></nav>
+    <nav aria-label="Page sections"><a href="#table">Atoms</a><a href="#bonds">Bonds</a><a href="#groups">Groups</a><a href="#molecules">Compounds</a><a href="#loops">Loops</a><a href="#complexes">Complexes</a><a href="#appendix">Appendix</a></nav>
     <span class="status" aria-hidden="true">Rev 0.6 · Nominal</span>
   </header>
 
@@ -421,6 +435,17 @@
         </div>
       </div>
     </section>
+
+    <div class="shell">
+      <a class="run-callout" href="play/">
+        <div class="run-callout-copy">
+          <p class="run-callout-kicker">New · this notation is executable</p>
+          <p class="run-callout-title">Do you actually want to <em>run</em> this??</p>
+          <p class="run-callout-lede">Every formula below compiles to a typed graph and executes against a real model — enforced gates, loops, traces and all. Open the playground, paste a formula, bring your own API key.</p>
+        </div>
+        <span class="run-callout-cta">Open the playground&nbsp;→</span>
+      </a>
+    </div>
 
     <div class="shell thesis" aria-label="Core definitions">
       <div class="thesis-item"><span class="thesis-label">Atom</span><p>The smallest reusable operator with independent engineering meaning—not an artifact, modality, or already-composed pattern.</p></div>
@@ -540,9 +565,21 @@
       </div>
     </section>
 
+    <section id="loops">
+      <div class="shell">
+        <p class="sheet-tag">Sht 05 — Goal-seeking loops <small>· a goal is not an atom</small></p>
+        <div class="section-head">
+          <h2>Loop until done — safely</h2>
+          <p class="section-intro">A goal decomposes into <strong>a target (Sy), a per-epoch check, and a stop discipline</strong> — a hard cap plus an explicit exhaustion policy. Every goal-seeking harness that works has all three; every one that runs away is missing one. The ladder below is ordered by <strong>who holds the check</strong> — nobody, the model itself, an independent judge — which is the bond-strength story again, applied to loops.</p>
+        </div>
+        <div class="complex-list" id="loop-ladder"></div>
+        <p class="chemistry-note"><strong>The runtime honors all of this:</strong> a <code>done</code> flag in the fed-back value exits the loop early, a passing verdict from a judge does the same, <code>max</code> caps the epochs, and <code>exhausted=emit-best</code> defines the consolation prize. Where consequence is high, the exit graduates once more — to an enforced verifier gate the harness holds, as in the coding agent's <code>Tl[code] ⊨! Vf[test] ↺ Lp[retry]</code>. All three rungs run live in <a href="play/">the playground</a>.</p>
+      </div>
+    </section>
+
     <section class="complexes-section" id="complexes">
       <div class="shell">
-        <p class="sheet-tag">Sht 05 — Complexes &amp; assemblies <small>· the multi-agent layer</small></p>
+        <p class="sheet-tag">Sht 06 — Complexes &amp; assemblies <small>· the multi-agent layer</small></p>
         <div class="section-head">
           <h2>When molecules bond to molecules</h2>
           <p class="section-intro"><strong>This is the multi-agent layer.</strong> What the literature calls a multi-agent system is, in this chemistry, a coordination complex: a central orchestrator bonded to specialist molecules. Ecosystems of independent agents—coupled by protocols and shared stores rather than a boss—are supramolecular assemblies. Dashed chips are whole molecules from Section IV, each running its own loop.</p>
@@ -553,7 +590,7 @@
 
     <section id="layers">
       <div class="shell">
-        <p class="sheet-tag">Sht 06 — Control radius <small>· prompt → context → harness</small></p>
+        <p class="sheet-tag">Sht 07 — Control radius <small>· prompt → context → harness</small></p>
         <div class="section-head">
           <h2>Atoms live in nested shells</h2>
           <p class="section-intro">The families answer “what does this move do?” The shells answer “how much of the system does it control?” This connects the table to the Prompt → Context → Harness trilogy.</p>
@@ -834,6 +871,9 @@
         const tokens = row.map(token => {
           if (token.startsWith('{')) {
             const label = token.slice(1, -1);
+            if (label.includes('=')) {
+              return `<span class="formula-opt" data-tt-t="Inline options" data-tt-b="Options shape the conventional lowering without new atoms: bounds, thresholds, exhaustion policies, join rules, state cells.">${token}</span>`;
+            }
             return `<span class="molecule-chip" data-tt-t="${esc(label)} · molecule" data-tt-b="A whole agent molecule from Section IV, running its own loop and acting here as one unit.">${label}</span>`;
           }
           const [symbol, variant] = token.split(':');
@@ -894,6 +934,20 @@
       const formulaLabel = molecule.notation.map(row => row.map(displayToken).join(' ')).join('; ');
       article.innerHTML = `<span class="molecule-index">M-${String(index + 1).padStart(2,'0')}</span><p class="molecule-kind">${molecule.kind}</p><h3>${molecule.name}</h3><div class="formula" aria-label="Bond formula: ${esc(formulaLabel)}">${renderNotation(molecule.notation)}</div><p>${molecule.desc}</p><p class="warning">${molecule.warning}</p>`;
       moleculeList.appendChild(article);
+    });
+
+    const goalLoops = [
+      {kind:'Rung one — nobody holds the check',name:'The naive loop',notation:[['Sy','→','Lp','→','Tl:api','↺','Lp']],desc:'“Just loop the agent until it is done.” No observation, no stop, no budget, no governance. The linter rejects the shape outright: without Ob, an attempted action is mistaken for a completed one; without Sp, “until” means “forever.” Every /goal harness that works has quietly added the atoms this formula is missing.',warning:'Runs forever, or lies about completion. Four stability laws object: AA101, AA102, AA103, AA108.'},
+      {kind:'Rung two — the model holds the check',name:'The goal loop',notation:[['Sy','→','Lp','{max=5, exhausted=emit-best}','→','Cr','↺','Lp']],desc:'The /goal pattern. The goal lives in Sy; a done flag in the model’s own output exits the loop early; the cap guarantees termination; emit-best defines what exhaustion returns. Three atoms and two options turn “loop until done” from a hope into a contract.',warning:'The generator grades its own work and can declare victory early — stability law 02. Fine for drafts, not for consequences.'},
+      {kind:'Rung three — an independent check decides',name:'The judged loop',notation:[['Sy','→','Lp','{max=4}','→','Cr','→','Sc:judge','{threshold=85}','↺','Lp']],desc:'A separate judge call scores each draft against the goal; the fed-back verdict exits the loop only when it passes the threshold. The done flag has graduated from the model’s opinion to a check the generator does not control.',warning:'A judge sampled from the generator’s own trust domain shares its blind spots — AA110. Independence is the point.'}
+    ];
+    const loopLadder = document.querySelector('#loop-ladder');
+    goalLoops.forEach((rung, index) => {
+      const article = document.createElement('article');
+      article.className = 'molecule';
+      const formulaLabel = rung.notation.map(row => row.map(displayToken).join(' ')).join('; ');
+      article.innerHTML = `<span class="molecule-index">L-${String(index + 1).padStart(2,'0')}</span><p class="molecule-kind">${rung.kind}</p><h3>${rung.name}</h3><div class="formula" aria-label="Bond formula: ${esc(formulaLabel)}">${renderNotation(rung.notation)}</div><p>${rung.desc}</p><p class="warning">${rung.warning}</p>`;
+      loopLadder.appendChild(article);
     });
 
     const complexList = document.querySelector('#complex-list');
