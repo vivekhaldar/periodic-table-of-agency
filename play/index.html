@@ -1,0 +1,800 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#16130d">
+  <meta name="description" content="The Agent Algebra playground: type a formula, compile it to a typed graph, lint it, simulate it — and run it against a real model with your own API key.">
+  <title>Playground · The Periodic Table of Agency</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=Spectral:ital,wght@0,300;0,400;0,600;1,300;1,400&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: oklch(16% 0.012 75);
+      --panel: oklch(20% 0.014 75);
+      --panel-2: oklch(24% 0.016 75);
+      --ink: oklch(92% 0.02 85);
+      --dim: oklch(68% 0.018 80);
+      --line: oklch(34% 0.02 78);
+      --line-soft: oklch(27% 0.016 78);
+      --amber: oklch(80% 0.15 75);
+      --alert: oklch(66% 0.19 33);
+      --green: oklch(76% 0.12 150);
+      --blue: oklch(72% 0.11 230);
+      --violet: oklch(70% 0.10 300);
+      --display: "Big Shoulders Display", "Arial Narrow", sans-serif;
+      --serif: Spectral, Georgia, serif;
+      --mono: "IBM Plex Mono", ui-monospace, monospace;
+      --ease: cubic-bezier(.22,1,.36,1);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; min-width: 320px;
+      background:
+        linear-gradient(color-mix(in oklch, var(--amber) 3.5%, transparent) 1px, transparent 1px) 0 0 / 100% 56px,
+        linear-gradient(90deg, color-mix(in oklch, var(--amber) 3.5%, transparent) 1px, transparent 1px) 0 0 / 56px 100%,
+        var(--bg);
+      color: var(--ink); font-family: var(--serif); font-weight: 300; line-height: 1.5;
+    }
+    ::selection { background: var(--amber); color: var(--bg); }
+    a { color: inherit; }
+    button { font: inherit; cursor: pointer; }
+    :focus-visible { outline: 2px solid var(--amber); outline-offset: 2px; }
+    .shell { width: min(1460px, 100%); margin-inline: auto; padding-inline: clamp(1rem, 3vw, 3rem); }
+
+    .masthead { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding-block: .9rem; border-bottom: 1px solid var(--line); font: 500 .68rem var(--mono); letter-spacing: .08em; text-transform: uppercase; }
+    .brand { display: flex; align-items: center; gap: .7rem; text-decoration: none; }
+    .brand-mark { display: grid; place-items: center; width: 2.1rem; aspect-ratio: 1; background: var(--amber); color: var(--bg); font: 700 1.05rem var(--display); }
+    .masthead a.back { color: var(--dim); text-decoration: none; }
+    .masthead a.back:hover { color: var(--amber); }
+
+    .hero { padding-block: clamp(2rem, 5vw, 4rem) clamp(1.5rem, 3vw, 2.5rem); }
+    .kicker { margin: 0 0 1rem; font: 500 .7rem var(--mono); letter-spacing: .16em; text-transform: uppercase; color: var(--amber); }
+    h1 { margin: 0 0 1rem; font: 800 clamp(2.8rem, 9vw, 6.5rem)/.85 var(--display); text-transform: uppercase; }
+    h1 em { font-style: normal; color: var(--amber); }
+    .lede { max-width: 52rem; margin: 0; color: var(--dim); font-size: clamp(1.05rem, 1.8vw, 1.3rem); }
+    .lede strong { color: var(--ink); font-weight: 600; }
+
+    .work { display: grid; gap: 1rem; padding-block: 1rem clamp(3rem, 6vw, 5rem); }
+    @media (min-width: 960px) { .work { grid-template-columns: minmax(24rem, .9fr) minmax(0, 1.1fr); align-items: start; } }
+
+    .card { border: 1px solid var(--line); background: var(--panel); padding: 1.1rem; }
+    .card + .card { margin-top: 1rem; }
+    .card h2 { margin: 0 0 .8rem; font: 700 1.05rem var(--display); letter-spacing: .06em; text-transform: uppercase; color: var(--amber); }
+    label { display: block; margin: .7rem 0 .25rem; font: 600 .6rem var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--dim); }
+    textarea, input[type="text"], input[type="password"], select {
+      width: 100%; padding: .55rem .6rem; border: 1px solid var(--line); background: var(--bg); color: var(--ink);
+      font: 500 .82rem/1.5 var(--mono); border-radius: 0;
+    }
+    textarea:focus, input:focus, select:focus { outline: 2px solid var(--amber); outline-offset: 0; border-color: var(--amber); }
+    #source { min-height: 11rem; resize: vertical; }
+    #input-override { min-height: 3.2rem; resize: vertical; }
+    .palette { display: flex; flex-wrap: wrap; gap: .3rem; margin-top: .45rem; }
+    .palette button { min-width: 2.1rem; padding: .3rem .45rem; border: 1px solid var(--line); background: var(--panel-2); color: var(--amber); font: 600 .95rem var(--mono); }
+    .palette button:hover { border-color: var(--amber); }
+    .hint { margin: .5rem 0 0; font: 400 .68rem/1.5 var(--mono); color: var(--dim); }
+    .actions { display: flex; flex-wrap: wrap; gap: .6rem; margin-top: 1rem; }
+    .btn { padding: .7rem 1rem; border: 1px solid var(--amber); background: transparent; color: var(--amber); font: 600 .72rem var(--mono); letter-spacing: .08em; text-transform: uppercase; transition: background 130ms, color 130ms; }
+    .btn:hover { background: var(--amber); color: var(--bg); }
+    .btn.primary { background: var(--amber); color: var(--bg); }
+    .btn.primary:hover { filter: brightness(1.08); }
+    .btn[disabled] { opacity: .45; cursor: wait; }
+    .btn.sub { border-color: var(--line); color: var(--dim); }
+    .btn.sub:hover { background: var(--panel-2); color: var(--ink); }
+    .keyrow { display: grid; grid-template-columns: 1fr auto; gap: .5rem; align-items: center; }
+    .remember { display: flex; align-items: center; gap: .45rem; margin-top: .5rem; font: 500 .66rem var(--mono); color: var(--dim); }
+    .remember input { width: auto; }
+    .privacy { margin: .8rem 0 0; padding: .7rem .8rem; border: 1px dashed var(--line); font: 400 .7rem/1.55 var(--mono); color: var(--dim); }
+    .privacy strong { color: var(--amber); font-weight: 600; }
+
+    .tabs { display: flex; flex-wrap: wrap; gap: .4rem; margin-bottom: .8rem; }
+    .tab { padding: .5rem .8rem; border: 1px solid var(--line); background: transparent; color: var(--dim); font: 600 .66rem var(--mono); letter-spacing: .08em; text-transform: uppercase; }
+    .tab[aria-selected="true"] { background: var(--amber); border-color: var(--amber); color: var(--bg); }
+    .panel { display: none; }
+    .panel.is-active { display: block; }
+    .placeholder { padding: 2.2rem 1rem; border: 1px dashed var(--line); color: var(--dim); font: 400 .8rem var(--mono); text-align: center; }
+    pre { margin: 0; padding: .8rem; border: 1px solid var(--line-soft); background: var(--bg); color: var(--ink); font: 400 .74rem/1.55 var(--mono); overflow-x: auto; white-space: pre-wrap; word-break: break-word; }
+    .canonical { padding: .9rem; border: 1px solid var(--amber); background: var(--bg); font: 600 1.15rem/1.6 var(--mono); color: var(--amber); overflow-x: auto; }
+    .chips { display: flex; flex-wrap: wrap; gap: .4rem; margin: .8rem 0; }
+    .chip { padding: .3rem .55rem; border: 1px solid var(--line); font: 500 .64rem var(--mono); color: var(--dim); }
+    .chip strong { color: var(--ink); font-weight: 600; }
+    .diag { display: block; width: 100%; margin: .35rem 0; padding: .55rem .7rem; border: 0; border-left: 3px solid var(--dim); background: var(--bg); color: var(--ink); font: 400 .72rem/1.5 var(--mono); text-align: left; }
+    .diag.error { border-left-color: var(--alert); }
+    .diag.warning { border-left-color: var(--amber); }
+    .diag.is-clickable { cursor: pointer; }
+    .diag.is-clickable:hover { background: var(--panel-2); }
+    .diag.is-active { outline: 1px solid var(--amber); background: var(--panel-2); }
+    .diag .rule { color: var(--amber); font-weight: 600; margin-right: .5rem; }
+    .diag .fix { display: block; margin-top: .3rem; color: var(--green); }
+    .diag .fix::before { content: "FIX → "; font-weight: 600; }
+    .diag .fix code { color: var(--ink); font-weight: 600; }
+    .canonical mark { background: var(--amber); color: var(--bg); font-weight: 700; padding-inline: .1em; }
+    .canonical mark.error { background: var(--alert); color: var(--ink); }
+    .hl-hint { margin: .3rem 0 0; font: 400 .62rem var(--mono); color: var(--dim); }
+    .spin { display: inline-block; width: .8em; aspect-ratio: 1; margin-right: .4em; border: 2px dashed var(--amber); border-radius: 50%; vertical-align: -.1em; animation: rotate 1.1s linear infinite; }
+    @keyframes rotate { to { transform: rotate(360deg); } }
+    @media (prefers-reduced-motion: reduce) { .spin { animation: none; opacity: .6; } }
+    .ok-note { padding: .55rem .7rem; border-left: 3px solid var(--green); background: var(--bg); font: 400 .72rem var(--mono); color: var(--dim); }
+    details { margin-top: .7rem; border: 1px solid var(--line-soft); }
+    details summary { padding: .5rem .7rem; font: 600 .64rem var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--dim); cursor: pointer; }
+    details[open] summary { border-bottom: 1px solid var(--line-soft); color: var(--amber); }
+    details pre { border: 0; }
+    table { width: 100%; border-collapse: collapse; font: 400 .72rem/1.5 var(--mono); }
+    th, td { padding: .4rem .55rem; border-bottom: 1px solid var(--line-soft); text-align: left; vertical-align: top; }
+    th { font-weight: 600; color: var(--amber); text-transform: uppercase; font-size: .6rem; letter-spacing: .1em; }
+    td .sym { color: var(--amber); font-weight: 600; }
+    .statusline { display: flex; flex-wrap: wrap; gap: .5rem 1.2rem; align-items: baseline; margin-bottom: .7rem; font: 600 .72rem var(--mono); }
+    .statusline .completed { color: var(--green); }
+    .statusline .blocked, .statusline .failed { color: var(--alert); }
+    #runlog { max-height: 16rem; overflow-y: auto; }
+    .trace-call { margin-top: .8rem; border: 1px solid var(--line); }
+    .trace-head { display: flex; flex-wrap: wrap; gap: .4rem 1rem; padding: .55rem .7rem; background: var(--panel-2); font: 600 .68rem var(--mono); }
+    .trace-head .op { color: var(--amber); }
+    .trace-head .tok { color: var(--dim); font-weight: 400; }
+    .trace-body { padding: .2rem .7rem .7rem; }
+    .handoff { margin-top: .5rem; font: 500 .68rem var(--mono); color: var(--dim); }
+    .handoff .bond { color: var(--alert); font-weight: 600; }
+    .err { margin-top: .8rem; padding: .7rem .8rem; border: 1px solid var(--alert); color: var(--ink); background: color-mix(in oklch, var(--alert) 12%, var(--bg)); font: 400 .74rem/1.5 var(--mono); }
+    footer { padding: 1.2rem 0 2.5rem; border-top: 1px solid var(--line-soft); font: 500 .64rem var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--dim); }
+    footer a { color: var(--amber); }
+  </style>
+</head>
+<body>
+  <header class="shell masthead">
+    <a class="brand" href="../" aria-label="Back to the Periodic Table of Agency"><span class="brand-mark">Ag</span><span>Periodic Table<br>of Agency</span></a>
+    <a class="back" href="../">← Back to the table</a>
+  </header>
+
+  <main class="shell">
+    <section class="hero">
+      <p class="kicker">Agent Algebra playground · powered by the agent-algebra runtime</p>
+      <h1>Run the <em>algebra.</em></h1>
+      <p class="lede">Type a formula. The same notation you saw on the field chart compiles to a <strong>typed graph IR</strong>, gets linted against the stability laws, simulates offline — and <strong>runs against a real model</strong> through a durable, evidence-gated runtime. Analysis is free and happens entirely in your browser. Running costs tokens: <strong>bring your own API key.</strong></p>
+    </section>
+
+    <div class="work">
+      <div>
+        <div class="card">
+          <h2>Formula / agent file</h2>
+          <label for="preset">Load an example</label>
+          <select id="preset"></select>
+          <label for="source">Source — a bare formula or a full .ag file with YAML front matter</label>
+          <textarea id="source" spellcheck="false"></textarea>
+          <div class="palette" id="palette" aria-label="Insert notation glyph"></div>
+          <p class="hint">ASCII works too: <code>-&gt;</code> <code>~&gt;</code> <code>-|</code> <code>|=</code> <code>--</code> <code>=&gt;</code> · strengths: <code>~</code> advisory, <code>!</code> enforced · options: <code>Lp{max=3}</code> · variants: <code>Tl[browse]</code></p>
+          <label for="input-override">Task input (overrides the file's input)</label>
+          <textarea id="input-override" spellcheck="false" placeholder="Leave empty to use the example's own input"></textarea>
+          <div class="actions">
+            <button class="btn" id="analyze-btn">Analyze — free · offline</button>
+            <button class="btn primary" id="run-btn">Run — your key · your tokens</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <h2>Provider</h2>
+          <label for="provider">Provider</label>
+          <select id="provider">
+            <option value="anthropic" selected>Anthropic (direct from browser)</option>
+            <option value="openai-compatible">OpenAI-compatible endpoint</option>
+          </select>
+          <div id="anthropic-config">
+            <label for="model">Model</label>
+            <select id="model">
+              <option value="claude-haiku-4-5-20251001" selected>Claude Haiku 4.5 — fast &amp; cheap (default)</option>
+              <option value="claude-sonnet-5">Claude Sonnet 5</option>
+              <option value="claude-opus-4-8">Claude Opus 4.8</option>
+              <option value="claude-fable-5">Claude Fable 5</option>
+              <option value="custom">Custom model id…</option>
+            </select>
+            <input type="text" id="model-custom" placeholder="model id" style="display:none; margin-top:.4rem">
+          </div>
+          <div id="openai-config" style="display:none">
+            <label for="base-url">Base URL</label>
+            <input type="text" id="base-url" placeholder="https://api.openai.com/v1 or http://localhost:11434/v1">
+            <label for="oa-model">Model</label>
+            <input type="text" id="oa-model" placeholder="gpt-5.2 / llama3.3 / …">
+          </div>
+          <label for="api-key">API key</label>
+          <div class="keyrow">
+            <input type="password" id="api-key" autocomplete="off" placeholder="sk-ant-…">
+            <button class="btn sub" id="clear-key">Clear</button>
+          </div>
+          <label class="remember"><input type="checkbox" id="remember-key"> keep in this tab only (sessionStorage)</label>
+          <p class="privacy"><strong>Where your key goes:</strong> straight from this page to the provider's API, nowhere else. This is a static page — there is no backend, no proxy, no logging. Requests and token costs are yours. Analysis never needs a key.</p>
+        </div>
+      </div>
+
+      <div class="card" id="results">
+        <h2>Results</h2>
+        <div class="tabs" role="tablist">
+          <button class="tab" role="tab" aria-selected="true" data-panel="panel-analysis">Canonical &amp; lint</button>
+          <button class="tab" role="tab" aria-selected="false" data-panel="panel-ir">Graph IR</button>
+          <button class="tab" role="tab" aria-selected="false" data-panel="panel-sim">Simulation</button>
+          <button class="tab" role="tab" aria-selected="false" data-panel="panel-run">Run &amp; trace</button>
+        </div>
+        <div class="panel is-active" id="panel-analysis"><p class="placeholder">Hit ANALYZE to parse, canonicalize, and lint the formula — no key, no network.</p></div>
+        <div class="panel" id="panel-ir"><p class="placeholder">The executable Graph IR appears here: nodes, bonds, loops, branches, state cells, scopes, and the plan digest.</p></div>
+        <div class="panel" id="panel-sim"><p class="placeholder">The offline simulator walks the graph with synthetic values — watch gates block and verdicts traverse without spending a token.</p></div>
+        <div class="panel" id="panel-run"><p class="placeholder">RUN executes the plan through the durable runtime: per-node log, brokered model calls, effect receipts, exact prompts, and the full trace.</p></div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="shell">
+    <span>Field chart rev 0.6 · runtime <a href="https://github.com/vivekhaldar/agent-algebra" rel="noreferrer">agent-algebra</a> · <a href="../">agentatoms.dev</a></span>
+  </footer>
+
+  <script type="module">
+    import * as AA from './agent-algebra-playground.js';
+
+    /* ---------------- presets ---------------- */
+    const PRESETS = [
+      { group: 'Start here', name: 'Reliable tool call (the first compound)', source: `---
+name: reliable-tool
+input: Compute a digest of this sentence and verify the observation.
+---
+Sy → Tl → Ob ⊨! Vf ⊣! Sp` },
+      { group: 'Start here', name: 'Minimal writer — 3 model calls', source: `---
+name: minimal-writer
+input: Draft a short note explaining why visible agent workflows are useful.
+---
+Sy → Pl → Cr → Dl → Sp` },
+      { group: 'Bond topologies', name: 'Enforced evidence gate  ⊨! ⊣!', source: `---
+name: verified-gate
+input: Explain, in three concrete points, why visible agent execution traces improve human oversight.
+nodes:
+  Dc:
+    prompt: Decompose the claim into a concise summary, grounded facts, uncertainties, decisions, and possible actions.
+---
+Sy → Dc ⊨! Vf{require=summary} ⊣! Sp` },
+      { group: 'Bond topologies', name: 'Advisory gate  ⊨~ ⊣~  — same shape, no guarantee', source: `---
+name: advisory-gate
+input: Explain, in three concrete points, why visible agent execution traces improve human oversight.
+nodes:
+  Dc:
+    prompt: Decompose the claim into a concise summary, grounded facts, uncertainties, decisions, and possible actions.
+---
+# Identical topology to the enforced gate — but Vf requires a field the
+# decomposition never produces, so the verdict FAILS. With ~ the failure is
+# recorded yet the run completes. Change ~ to ! and it blocks. Topology is
+# not strength.
+Sy → Dc ⊨~ Vf{require=citations} ⊣~ Sp` },
+      { group: 'Bond topologies', name: 'First wins  ⇉ join=any  — loser gets cancelled', source: `---
+name: first-wins
+input: Assess in one paragraph whether an executable notation is useful for designing agent systems.
+nodes:
+  Cr:
+    prompt: Critique the proposal from a reliability and failure-modes perspective.
+  Dc:
+    prompt: Decompose the proposal from a language-design and usability perspective.
+---
+# Two model branches race; join=any takes the first result and the runtime
+# cancels the loser — watch for "cancelled: join-satisfied" in the run log.
+Sy → Bh{concurrency=2, join=any} ⇉ Cr + Dc → Mg → Sp` },
+      { group: 'Bond topologies', name: 'Feedback loop  ↺  (3 epochs)', source: `---
+name: feedback-loop
+input: Draft and iteratively improve a compact definition of an agent harness.
+nodes:
+  Cr:
+    prompt: >-
+      Improve the supplied artifact as an exacting technical editor. On later
+      loop epochs, treat the prior critique as material to refine. Return an
+      assessment, strengths, risks, and actionable recommendations.
+---
+Sy → Lp{max=3, exhausted=emit-best} → Cr ↺ Lp` },
+      { group: 'Bond topologies', name: 'Parallel fan-out  ⇉  with join', source: `---
+name: parallel-review
+input: Assess whether an executable notation is useful for designing agent systems.
+nodes:
+  Cr:
+    prompt: Critique the proposal from a reliability and failure-modes perspective.
+  Dc:
+    prompt: Decompose the proposal from a language-design and usability perspective.
+---
+Sy → Bh{concurrency=2, join=all} ⇉ Cr + Dc → Mg → Sp` },
+      { group: 'Bond topologies', name: 'State cell  —  (write, then read)', source: `---
+name: stateful-brief
+input: Analyze the tradeoffs between implicit agent orchestration and an explicit executable graph.
+---
+Sy → Dc{cell=analysis} — Xt{cell=analysis} → Rt → Cp → Sp` },
+      { group: 'Bond topologies', name: 'Assembly  +  (co-present context)', source: `---
+name: assembled-context
+input: Create a small plan for explaining agent bonds to a software engineer.
+---
+Sy + Ex → Pl → Sp` },
+      { group: 'Bond topologies', name: 'Containment  [ … ]  (scoped effects)', source: `---
+name: contained-analysis
+input: Produce a concise decision brief about when an agent should be allowed to use external tools.
+---
+Sy → [ Dc → Cp ] → Sp` },
+      { group: 'Loop & goal engineering', name: 'Rung ① The naive loop — analyze it: it doesn’t lint', source: `# "Just loop the agent until the goal is met."
+# ANALYZE this: the linter rejects it. No Observe (AA101) — attempted actions
+# get mistaken for completed ones. No Stop (AA102) — "until" means "forever".
+# No Budget (AA103) and ungoverned tools (AA108). Every /goal harness that
+# works has quietly added the atoms this formula is missing.
+Sy → Lp → Tl[api] ↺ Lp` },
+      { group: 'Loop & goal engineering', name: 'Rung ② Goal loop — the model says done', source: `---
+name: goal-loop
+input: 'Goal: a crisp three-sentence explanation of bond strength (advisory vs coded vs enforced) that a junior engineer immediately gets.'
+nodes:
+  Cr:
+    prompt: >-
+      You are pursuing the stated goal across loop epochs. Improve the current
+      draft toward the goal each epoch. Set done=true ONLY when the draft fully
+      meets the goal; otherwise set done=false and name the remaining gap.
+    output:
+      schema:
+        type: object
+        properties:
+          draft: { type: string }
+          gap: { type: string }
+          done: { type: boolean }
+        required: [draft, gap, done]
+        additionalProperties: false
+---
+# A goal is not an atom. It is Sy (the target) + a per-epoch check (done,
+# judged against the goal) + a stop discipline (max + emit-best). done=true
+# exits EARLY; the cap guarantees "until done" can never mean "forever".
+# Caveat (law 02): the generator grades its own work — see Rung ③.
+Sy → Lp{max=5, exhausted=emit-best} → Cr ↺ Lp` },
+      { group: 'Loop & goal engineering', name: 'Rung ③ Judged loop — a verdict says done', source: `---
+name: judged-loop
+input: 'Goal: a two-sentence pitch for executable agent notation that a skeptical CTO would repeat to their team.'
+nodes:
+  Cr:
+    prompt: >-
+      Improve the pitch toward the stated goal each epoch. If the input
+      contains a judge verdict, treat its score and weaknesses as the gap to
+      close. Return only the improved pitch.
+    output:
+      schema:
+        type: object
+        properties:
+          pitch: { type: string }
+        required: [pitch]
+        additionalProperties: false
+  Sc:
+    prompt: >-
+      You are an exacting judge. Score the supplied pitch from 0 to 100
+      against the goal: concrete, memorable, credible to a skeptical CTO.
+      Echo the exact pitch you scored, and name its biggest weakness. Award
+      85 or more only if you would genuinely repeat the pitch yourself.
+    output:
+      schema:
+        type: object
+        properties:
+          score: { type: integer }
+          pitch: { type: string }
+          weakness: { type: string }
+        required: [score, pitch, weakness]
+        additionalProperties: false
+---
+# Rung three: the generator no longer grades its own work. A separate judge
+# call scores each draft; the fed-back verdict exits the loop when it passes
+# the threshold; the cap still guarantees termination. Watch the run log:
+# failing verdicts loop, a passing verdict stops the machine.
+Sy → Lp{max=4, exhausted=emit-best} → Cr → Sc{threshold=85} ↺ Lp` },
+      { group: 'Loop & goal engineering', name: 'Plan interpreter — task → plan → execute steps', source: `---
+name: plan-interpreter
+input: 'Task: prepare a lightning talk that introduces agent bonds to working engineers.'
+nodes:
+  Pl:
+    prompt: >-
+      Turn the task into a granular plan of exactly three short, concrete,
+      independently executable steps.
+    output:
+      schema:
+        type: object
+        properties:
+          objective: { type: string }
+          steps:
+            type: array
+            items: { type: string }
+        required: [objective, steps]
+        additionalProperties: false
+  Cr:
+    prompt: >-
+      You are executing the plan one step per epoch. The input contains the
+      plan and any results so far. Execute exactly ONE not-yet-executed step
+      and produce its concrete result. Copy forward the plan and all previously
+      completed results unchanged. Set done=true only when every step in the
+      plan has a result.
+    output:
+      schema:
+        type: object
+        properties:
+          plan:
+            type: object
+            properties:
+              objective: { type: string }
+              steps:
+                type: array
+                items: { type: string }
+            required: [objective, steps]
+            additionalProperties: false
+          results:
+            type: array
+            items:
+              type: object
+              properties:
+                step: { type: string }
+                result: { type: string }
+              required: [step, result]
+              additionalProperties: false
+          done: { type: boolean }
+        required: [plan, results, done]
+        additionalProperties: false
+---
+# Task → granular plan → execute the steps. Pl authors the plan; the loop
+# walks it, one step per epoch; done=true exits when every step has a result.
+# The plan-following is advisory — an enforced plan bond makes it a workflow.
+Sy → Pl → Lp{max=5} → Ds → Cr ↺ Lp` },
+      { group: 'Recovery & human input', name: 'Durable recovery — checkpoint, wait, corrupt, roll back', source: `---
+name: durable-recovery
+input: Produce a short checklist for safely rolling out an agent to production.
+---
+# Dc produces an artifact; Ck snapshots it; Wt really waits (watch the node
+# duration); the flaky tool corrupts the live artifact; Rb restores the
+# checkpoint; the verifier gate demands evidence of restoration before Stop.
+Sy → Dc → Ck → Wt{ms=1500} → Tl[flaky] → Ob → Rb ⊨ Vf{require=restored} ⊣! Sp` },
+      { group: 'Recovery & human input', name: 'Ask a human — Ak pauses the run for you', source: `---
+name: ask-human
+input: Plan a 20-minute live demo of the agent-algebra playground.
+nodes:
+  Ak: 'Who is the audience, and what must the demo absolutely include?'
+---
+# Ak pauses for a real human answer — in the browser, a prompt dialog opens
+# mid-run and YOUR answer joins the context before the model plans. Ask is not
+# Approve: it collects information, it does not gate a side effect.
+Sy → Ak → Pl → Sp` },
+      { group: 'Full agents', name: 'Analyst — schemas + node prompts', source: `---
+apiVersion: agentatoms.dev/agent/v1alpha1
+name: analyst
+input:
+  literal: >-
+    Our beta has 23 users. Seven returned in week two. Four asked for GitHub
+    integration. Two reported confusing setup. We have one engineer and want
+    to choose next week's work.
+  schema:
+    type: string
+    minLength: 1
+output:
+  schema:
+    type: object
+    properties:
+      executive_summary: { type: string }
+      ranked_actions:
+        type: array
+        items: { type: string }
+      evidence:
+        type: array
+        items: { type: string }
+      open_questions:
+        type: array
+        items: { type: string }
+    required: [executive_summary, ranked_actions, evidence, open_questions]
+    additionalProperties: false
+nodes:
+  Dc:
+    prompt: >-
+      Decompose the input into explicit facts, uncertainties, decisions, and
+      possible actions. Do not invent evidence.
+  Cp:
+    prompt: >-
+      Compact the decomposition into a decision brief. Rank only actions
+      supported by the input and state what remains unknown.
+---
+Sy → Dc → Cp → Sp` },
+      { group: 'Full agents', name: 'Reviewer — critique then score', source: `---
+name: reviewer
+input: >-
+  Review this launch proposal: ship an agent workflow editor to 20 beta users
+  next Friday; success means 8 use it twice; roll back if support tickets
+  exceed 5.
+nodes:
+  Cr:
+    prompt: Critique the launch proposal. Distinguish strengths, risks, and concrete improvements.
+---
+Sy → Cr → Sc → Sp` },
+      { group: 'Analyze only (for now)', name: 'Coding agent (field chart M-03)', source: `Rt[skill] + Rt[code] → Pl → Lp → Tl[code] ⊨! Vf[test] ↺ Lp[retry]` },
+      { group: 'Analyze only (for now)', name: 'Orchestrator–workers complex (C-01)', source: `Pl → Dc → Dl ⇉ {Worker} + {Worker} + {Worker} → Mg → Sc ⊨ Vf ⊣ Sp` },
+      { group: 'Analyze only (for now)', name: 'Lint teacher — break the stability laws', source: `# AA101: a tool with no Observe. AA102: a loop with no Stop.
+Sy → Lp → Tl[api]` },
+    ];
+
+    const preset = document.querySelector('#preset');
+    let currentGroup = null;
+    let groupEl = null;
+    PRESETS.forEach((item, index) => {
+      if (item.group !== currentGroup) {
+        currentGroup = item.group;
+        groupEl = document.createElement('optgroup');
+        groupEl.label = item.group;
+        preset.appendChild(groupEl);
+      }
+      const option = document.createElement('option');
+      option.value = String(index);
+      option.textContent = item.name;
+      groupEl.appendChild(option);
+    });
+
+    const source = document.querySelector('#source');
+    const inputOverride = document.querySelector('#input-override');
+    preset.addEventListener('change', () => {
+      source.value = PRESETS[Number(preset.value)].source;
+      inputOverride.value = '';
+    });
+    source.value = PRESETS[2].source; // enforced evidence gate
+    preset.value = '2';
+
+    /* ---------------- glyph palette ---------------- */
+    const glyphs = ['→','↺','⊣','⊨','—','⇉','+','[',']','{','}','~','!'];
+    const palette = document.querySelector('#palette');
+    for (const glyph of glyphs) {
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.textContent = glyph;
+      button.title = `Insert ${glyph}`;
+      button.addEventListener('click', () => {
+        const start = source.selectionStart ?? source.value.length;
+        const end = source.selectionEnd ?? start;
+        source.setRangeText(` ${glyph} `.replaceAll('  ', ' '), start, end, 'end');
+        source.focus();
+      });
+      palette.appendChild(button);
+    }
+
+    /* ---------------- provider config ---------------- */
+    const providerSelect = document.querySelector('#provider');
+    const modelSelect = document.querySelector('#model');
+    const modelCustom = document.querySelector('#model-custom');
+    const apiKeyInput = document.querySelector('#api-key');
+    const rememberKey = document.querySelector('#remember-key');
+
+    providerSelect.addEventListener('change', () => {
+      document.querySelector('#anthropic-config').style.display = providerSelect.value === 'anthropic' ? '' : 'none';
+      document.querySelector('#openai-config').style.display = providerSelect.value === 'openai-compatible' ? '' : 'none';
+    });
+    modelSelect.addEventListener('change', () => {
+      modelCustom.style.display = modelSelect.value === 'custom' ? '' : 'none';
+    });
+    const storedKey = sessionStorage.getItem('aa-play-key');
+    if (storedKey) { apiKeyInput.value = storedKey; rememberKey.checked = true; }
+    apiKeyInput.addEventListener('input', () => {
+      if (rememberKey.checked) sessionStorage.setItem('aa-play-key', apiKeyInput.value);
+    });
+    rememberKey.addEventListener('change', () => {
+      if (rememberKey.checked) sessionStorage.setItem('aa-play-key', apiKeyInput.value);
+      else sessionStorage.removeItem('aa-play-key');
+    });
+    document.querySelector('#clear-key').addEventListener('click', () => {
+      apiKeyInput.value = '';
+      sessionStorage.removeItem('aa-play-key');
+      rememberKey.checked = false;
+    });
+
+    function providerConfig() {
+      if (providerSelect.value === 'openai-compatible') {
+        return {
+          provider: 'openai-compatible',
+          apiKey: apiKeyInput.value.trim(),
+          baseUrl: document.querySelector('#base-url').value.trim(),
+          model: document.querySelector('#oa-model').value.trim(),
+        };
+      }
+      const model = modelSelect.value === 'custom' ? modelCustom.value.trim() : modelSelect.value;
+      return { provider: 'anthropic', apiKey: apiKeyInput.value.trim(), model };
+    }
+
+    /* ---------------- tabs ---------------- */
+    const tabs = [...document.querySelectorAll('.tab')];
+    function selectTab(id) {
+      tabs.forEach((tab) => tab.setAttribute('aria-selected', String(tab.dataset.panel === id)));
+      document.querySelectorAll('.panel').forEach((panel) => panel.classList.toggle('is-active', panel.id === id));
+    }
+    tabs.forEach((tab) => tab.addEventListener('click', () => selectTab(tab.dataset.panel)));
+
+    /* ---------------- rendering helpers ---------------- */
+    const escapeHtml = (value) => String(value)
+      .replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll('"', '&quot;');
+    const json = (value) => escapeHtml(JSON.stringify(value, null, 2));
+    const bondGlyph = { sequence: '→', feedback: '↺', gate: '⊣', evidence: '⊨', state: '—', parallel: '⇉' };
+    const strengthMark = { advisory: '~', coded: '', enforced: '!' };
+
+    const FIXES = {
+      AA100: 'Insert an adapter or align the port types across the sequence edge.',
+      AA101: 'Add an Observe after the tool: <code>Tl → Ob</code> — never treat an attempted effect as a completed one.',
+      AA102: 'Give the loop a reachable Stop: <code>… ↺ Lp → Sp</code>, usually gated: <code>⊨! Vf ⊣! Sp</code>.',
+      AA103: 'Bound the loop: connect a Budget — <code>[ Bg ] ⊣ Lp</code> — or set <code>Lp{max=N, noProgress=N}</code>.',
+      AA104: 'Converge the fan-out: end the branches in <code>Mg</code> (merge), <code>Sc</code> (score), or <code>Sp</code>.',
+      AA105: 'Provision the delegation: <code>Dl + Sy + Cn + Bg</code> — each worker needs its own spec, constraints, and budget.',
+      AA106: 'Checkpoint before waiting: <code>Ck — Wt</code>, so the run can resume from saved state.',
+      AA107: 'Protect completion with enforced evidence: <code>Ob ⊨! Vf ⊣! Sp</code>.',
+      AA108: 'Wrap the tool in a safety envelope: <code>[ Tl ] + Pm + Sb + Bg</code>.',
+      AA109: 'Harden the termination path: upgrade <code>~</code> bonds to <code>!</code> where they guard Stop.',
+      AA110: 'Verify independently: use a different trust domain than the generator — another model, a real tool, or a human.',
+    };
+
+    let lastAnalysis = null;
+    function canonicalHtml(result, highlightIds = [], severity = 'warning') {
+      const text = result.canonical.replace(/\n+$/, '');
+      const spans = highlightIds
+        .map((id) => result.canonicalSpans?.[id])
+        .filter((span) => span && span.end <= text.length)
+        .sort((a, b) => a.start - b.start);
+      if (!spans.length) return escapeHtml(text);
+      let html = '';
+      let cursor = 0;
+      for (const span of spans) {
+        if (span.start < cursor) continue;
+        html += escapeHtml(text.slice(cursor, span.start));
+        html += `<mark class="${severity}">${escapeHtml(text.slice(span.start, span.end))}</mark>`;
+        cursor = span.end;
+      }
+      return html + escapeHtml(text.slice(cursor));
+    }
+
+    function renderAnalysis(result) {
+      lastAnalysis = result;
+      const diagnostics = result.diagnostics.length
+        ? result.diagnostics.map((d, index) => {
+            const clickable = d.nodeIds?.length && d.nodeIds.some((id) => result.canonicalSpans?.[id]);
+            const fix = FIXES[d.rule] ? `<span class="fix">${FIXES[d.rule]}</span>` : '';
+            return `<button type="button" class="diag ${d.severity}${clickable ? ' is-clickable' : ''}" data-diag="${index}" ${clickable ? `data-nodes="${d.nodeIds.join(',')}"` : 'disabled'}><span class="rule">${escapeHtml(d.severity.toUpperCase())} ${escapeHtml(d.rule)}</span>${escapeHtml(d.message)}${fix}</button>`;
+          }).join('')
+        : '<p class="ok-note">No diagnostics — the formula satisfies every stability law the linter checks.</p>';
+      document.querySelector('#panel-analysis').innerHTML = `
+        <label>Canonical form</label>
+        <div class="canonical" id="canonical-strip">${canonicalHtml(result)}</div>
+        <label>Stability-law lint</label>
+        ${diagnostics}
+        ${result.diagnostics.some((d) => d.nodeIds?.length) ? '<p class="hl-hint">Click a diagnostic to highlight the atoms it points at.</p>' : ''}
+        <details><summary>AST (parser output)</summary><pre>${json(result.ast)}</pre></details>`;
+      document.querySelectorAll('#panel-analysis .diag.is-clickable').forEach((button) => {
+        button.addEventListener('click', () => {
+          const wasActive = button.classList.contains('is-active');
+          document.querySelectorAll('#panel-analysis .diag').forEach((item) => item.classList.remove('is-active'));
+          const strip = document.querySelector('#canonical-strip');
+          if (wasActive) {
+            strip.innerHTML = canonicalHtml(lastAnalysis);
+            return;
+          }
+          button.classList.add('is-active');
+          const severity = button.classList.contains('error') ? 'error' : 'warning';
+          strip.innerHTML = canonicalHtml(lastAnalysis, button.dataset.nodes.split(','), severity);
+        });
+      });
+    }
+
+    function renderIr(result) {
+      const panel = document.querySelector('#panel-ir');
+      if (!result.executable) {
+        panel.innerHTML = `<div class="err">This program analyzes structurally but has no conventional executable lowering: ${escapeHtml(result.executableError ?? 'unknown')}. Composites like {Worker} need explicit semantics — that is the point: nothing runs until every construct has a bounded meaning.</div>`;
+        return;
+      }
+      const g = result.executable;
+      const rows = g.nodes.map((node) => `<tr><td>${escapeHtml(node.id)}</td><td><span class="sym">${escapeHtml(node.operator.symbol)}</span> ${escapeHtml(node.operator.variant ? `[${node.operator.variant}]` : '')} ${escapeHtml(AA.operatorNames[node.operator.symbol] ?? '')}</td><td>${escapeHtml(node.declaredEffects.join(', ') || '—')}</td><td>${escapeHtml(node.activation)}</td></tr>`).join('');
+      const edges = g.edges.map((edge) => `<tr><td>${escapeHtml(edge.from.nodeId)}</td><td><span class="sym">${bondGlyph[edge.bond] ?? escapeHtml(edge.bond)}${strengthMark[edge.strength] ?? ''}</span> ${escapeHtml(edge.bond)} · ${escapeHtml(edge.strength)}</td><td>${escapeHtml(edge.to.nodeId)}</td></tr>`).join('');
+      panel.innerHTML = `
+        <div class="chips">
+          <span class="chip">nodes <strong>${g.nodes.length}</strong></span>
+          <span class="chip">edges <strong>${g.edges.length}</strong></span>
+          <span class="chip">loops <strong>${g.loops.length}</strong></span>
+          <span class="chip">branches <strong>${g.branches.length}</strong></span>
+          <span class="chip">state cells <strong>${g.stateCells.length}</strong></span>
+          <span class="chip">scopes <strong>${g.scopes.length}</strong></span>
+          <span class="chip">plan digest <strong>${escapeHtml(result.planDigest.slice(7, 19))}…</strong></span>
+        </div>
+        <label>Nodes</label>
+        <table><thead><tr><th>id</th><th>operator</th><th>effects</th><th>activation</th></tr></thead><tbody>${rows}</tbody></table>
+        <label>Bonds</label>
+        <table><thead><tr><th>from</th><th>bond</th><th>to</th></tr></thead><tbody>${edges}</tbody></table>
+        <details><summary>Full executable Graph IR (v2) JSON</summary><pre>${json(g)}</pre></details>`;
+    }
+
+    function renderSimulation(result) {
+      const panel = document.querySelector('#panel-sim');
+      if (!result.simulation) {
+        panel.innerHTML = `<div class="err">Simulation unavailable: ${escapeHtml(result.simulationError ?? 'unknown')}</div>`;
+        return;
+      }
+      const events = (result.simulation.trace ?? []).map((event) => `<p class="diag">${escapeHtml(JSON.stringify(event))}</p>`).join('');
+      panel.innerHTML = `
+        <p class="ok-note">One-pass structural simulation with synthetic values — zero tokens spent. Gates only open for passing verdicts.</p>
+        ${events || `<details open><summary>Simulation result</summary><pre>${json(result.simulation)}</pre></details>`}
+        ${events ? `<details><summary>Raw simulation JSON</summary><pre>${json(result.simulation)}</pre></details>` : ''}`;
+    }
+
+    /* ---------------- analyze ---------------- */
+    let lastTrace = null;
+    document.querySelector('#analyze-btn').addEventListener('click', () => {
+      try {
+        const result = AA.analyze(source.value);
+        renderAnalysis(result);
+        renderIr(result);
+        renderSimulation(result);
+        selectTab('panel-analysis');
+      } catch (error) {
+        document.querySelector('#panel-analysis').innerHTML = `<div class="err">${escapeHtml(error.message ?? String(error))}</div>`;
+        selectTab('panel-analysis');
+      }
+    });
+
+    /* ---------------- run ---------------- */
+    const runBtn = document.querySelector('#run-btn');
+    runBtn.addEventListener('click', async () => {
+      const config = providerConfig();
+      const runPanel = document.querySelector('#panel-run');
+      selectTab('panel-run');
+      if (!config.apiKey) {
+        runPanel.innerHTML = '<div class="err">Running invokes a real model, and that costs tokens — add your own API key in the Provider card. (Everything under ANALYZE works without one.)</div>';
+        return;
+      }
+      config.input = inputOverride.value.trim();
+      runPanel.innerHTML = `
+        <div class="statusline"><span>status <span id="run-status"><span class="spin" aria-hidden="true"></span>running — real model calls in flight…</span></span><span id="run-id"></span></div>
+        <label>Runtime log</label>
+        <pre id="runlog"></pre>
+        <div id="run-result"></div>`;
+      const log = document.querySelector('#runlog');
+      runBtn.disabled = true;
+      const runBtnLabel = runBtn.textContent;
+      runBtn.textContent = 'Running…';
+      try {
+        const result = await AA.runAgent(source.value, config, {
+          onLog: (line) => { log.textContent += `${line}\n`; log.scrollTop = log.scrollHeight; },
+        });
+        lastTrace = result.trace;
+        const statusEl = document.querySelector('#run-status');
+        statusEl.textContent = result.status;
+        statusEl.className = result.status;
+        document.querySelector('#run-id').textContent = `run ${result.runId.slice(0, 8)}… · plan ${result.trace.run.planDigest.slice(7, 15)}…`;
+        const calls = result.trace.calls.map((call) => `
+          <div class="trace-call">
+            <div class="trace-head">
+              <span>#${call.sequence}</span>
+              <span class="op">${escapeHtml(call.node.operator ?? '?')} · ${escapeHtml(call.node.id)}</span>
+              <span class="tok">${escapeHtml(call.response?.model ?? '')} · in ${call.response?.usage?.inputTokens ?? '?'} / out ${call.response?.usage?.outputTokens ?? '?'} tokens</span>
+            </div>
+            <div class="trace-body">
+              <details><summary>Exact prompt</summary><pre>${escapeHtml(call.request.exactPrompt ?? '')}</pre></details>
+              <details><summary>Exact output</summary><pre>${json(call.response?.exactOutput ?? null)}</pre></details>
+              ${call.request.outputSchema ? `<details><summary>Output schema (enforced by the provider)</summary><pre>${json(call.request.outputSchema)}</pre></details>` : ''}
+              ${call.handoff ? `<p class="handoff">handoff: <span class="bond">${bondGlyph[call.handoff.bond] ?? call.handoff.bond}${strengthMark[call.handoff.strength] ?? ''}</span> → ${escapeHtml(call.handoff.nextOperator)} (${escapeHtml(call.handoff.nextNode)})${call.handoff.loop ? ` · loop ${escapeHtml(call.handoff.loop)}` : ''}</p>` : ''}
+            </div>
+          </div>`).join('');
+        document.querySelector('#run-result').innerHTML = `
+          <div class="chips">
+            <span class="chip">model calls <strong>${result.metrics.llmEffects}</strong></span>
+            <span class="chip">tokens in <strong>${result.metrics.inputTokens}</strong></span>
+            <span class="chip">tokens out <strong>${result.metrics.outputTokens}</strong></span>
+            <span class="chip">total <strong>${result.metrics.totalTokens}</strong></span>
+          </div>
+          ${result.error ? `<div class="err">${escapeHtml(result.error.code ?? 'error')}: ${escapeHtml(result.error.message ?? '')}</div>` : ''}
+          <label>Final output${result.status === 'blocked' ? ' (blocked — the enforced gate refused completion)' : ''}</label>
+          <pre>${json(result.output ?? null)}</pre>
+          <label>Model calls — exact prompts, outputs, and bond handoffs</label>
+          ${calls || '<p class="ok-note">No model effects in this graph.</p>'}
+          <div class="actions"><button class="btn sub" id="download-trace">Download full trace JSON</button></div>`;
+        document.querySelector('#download-trace')?.addEventListener('click', () => {
+          const blob = new Blob([JSON.stringify(lastTrace, null, 2)], { type: 'application/json' });
+          const url = URL.createObjectURL(blob);
+          const anchor = document.createElement('a');
+          anchor.href = url;
+          anchor.download = `${lastTrace.agent}-trace.json`;
+          anchor.click();
+          URL.revokeObjectURL(url);
+        });
+      } catch (error) {
+        document.querySelector('#run-status').textContent = 'failed';
+        document.querySelector('#run-status').className = 'failed';
+        document.querySelector('#run-result').innerHTML = `<div class="err">${escapeHtml(error.message ?? String(error))}</div>`;
+      } finally {
+        runBtn.disabled = false;
+        runBtn.textContent = runBtnLabel;
+      }
+    });
+  </script>
+</body>
+</html>
