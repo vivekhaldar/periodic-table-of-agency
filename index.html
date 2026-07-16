@@ -427,7 +427,7 @@
   <a class="skip-link" href="#main">Skip to main content</a>
   <header class="shell masthead">
     <a class="brand" href="#top" aria-label="The Periodic Table of Agency home"><span class="brand-mark">Ag</span><span>Periodic Table<br>of Agency</span></a>
-    <nav aria-label="Page sections"><a href="#start">Start here</a><a href="#table">Atoms</a><a href="#bonds">Bonds</a><a href="#groups">Groups</a><a href="#molecules">Compounds</a><a href="#loops">Loops</a><a href="#complexes">Complexes</a><a href="#appendix">Appendix</a></nav>
+    <nav aria-label="Page sections"><a href="#table">Atoms</a><a href="#bonds">Bonds</a><a href="#groups">Groups</a><a href="#molecules">Compounds</a><a href="#loops">Loops</a><a href="#complexes">Complexes</a><a href="#start">Beginner route</a><a href="#appendix">Appendix</a></nav>
     <span class="status" aria-hidden="true">Rev 0.6 · Nominal</span>
   </header>
 
@@ -467,19 +467,6 @@
       <div class="thesis-item"><span class="thesis-label">Molecule</span><p>One cohesive agent pattern with a bounded purpose and runtime identity.</p></div>
       <div class="thesis-item"><span class="thesis-label">Complex</span><p>Several agent molecules coordinated by an orchestrator, protocol, or shared environment.</p></div>
     </div>
-
-    <section class="shell start-path" id="start" aria-labelledby="start-title">
-      <p class="kicker">Beginner route · about 60–90 minutes</p>
-      <h2 id="start-title">Build one guarantee at a time</h2>
-      <p>For software engineers who can read a small control-flow diagram; no agent framework experience is required. Analysis is free and offline. A live Run needs a scoped API key. On each rung: predict first, load the named playground preset, run or analyze it, break one invariant, and explain the result.</p>
-      <ol class="start-rungs">
-        <li class="start-rung"><h3>One model-backed operation</h3><p><strong>Learn:</strong> distinguish a model operation from the surrounding harness. In <a href="play/">Minimal writer — 3 model calls</a>, predict the call order. Then remove <code>Sp</code>. Does the formula still say when work is complete?</p></li>
-        <li class="start-rung"><h3>Act, observe, verify</h3><p><strong>Learn:</strong> explain why attempted action is not evidence. Load <a href="play/">Reliable tool call</a>, then remove <code>Ob</code> and Analyze. Connect the diagnostic to <a href="#bonds">evidence and gate bonds</a>.</p></li>
-        <li class="start-rung"><h3>Enforce the evidence gate</h3><p><strong>Learn:</strong> distinguish advisory from enforced bonds. Compare the enforced and advisory gate presets. Change <code>!</code> to <code>~</code>, predict whether failure blocks Stop, and check against <a href="#bonds">stability law 03</a>.</p></li>
-        <li class="start-rung"><h3>Bound feedback</h3><p><strong>Learn:</strong> identify action, feedback, and termination. Run <a href="play/">Feedback loop (3 epochs)</a>; remove <code>max=3</code> and Analyze. Explain which of <a href="#loops">the goal-loop rungs</a> owns the completion check.</p></li>
-        <li class="start-rung"><h3>Survive or fan out</h3><p><strong>Capstone:</strong> choose <a href="play/">Durable recovery</a> or <a href="play/">Parallel fan-out with join</a>. Predict the trace, remove <code>Ck</code> or <code>Mg</code>, and explain the failure using the <a href="#groups">Recovery pack</a> or <a href="#complexes">coordination layer</a>. Then modify the task input and rerun it.</p></li>
-      </ol>
-    </section>
 
     <section id="table">
       <div class="shell">
@@ -629,6 +616,19 @@
           <article class="layer"><span class="layer-num">Outer shell</span><h3>Harness</h3><p>Shapes what the system can do over time through tools, loops, dispatch, verification, permissions, budgets, recovery, and termination.</p></article>
         </div>
       </div>
+    </section>
+
+    <section class="shell start-path" id="start" aria-labelledby="start-title">
+      <p class="kicker">Beginner route · about 60–90 minutes</p>
+      <h2 id="start-title">Build one guarantee at a time</h2>
+      <p>For software engineers who can read a small control-flow diagram; no agent framework experience is required. Analysis is free and offline. A live Run needs a scoped API key. On each rung: predict first, load the named playground preset, run or analyze it, break one invariant, and explain the result.</p>
+      <ol class="start-rungs">
+        <li class="start-rung"><h3>One model-backed operation</h3><p><strong>Learn:</strong> distinguish a model operation from the surrounding harness. In <a href="play/">Minimal writer — 3 model calls</a>, predict the call order. Then remove <code>Sp</code>. Does the formula still say when work is complete?</p></li>
+        <li class="start-rung"><h3>Act, observe, verify</h3><p><strong>Learn:</strong> explain why attempted action is not evidence. Load <a href="play/">Reliable tool call</a>, then remove <code>Ob</code> and Analyze. Connect the diagnostic to <a href="#bonds">evidence and gate bonds</a>.</p></li>
+        <li class="start-rung"><h3>Enforce the evidence gate</h3><p><strong>Learn:</strong> distinguish advisory from enforced bonds. Compare the enforced and advisory gate presets. Change <code>!</code> to <code>~</code>, predict whether failure blocks Stop, and check against <a href="#bonds">stability law 03</a>.</p></li>
+        <li class="start-rung"><h3>Bound feedback</h3><p><strong>Learn:</strong> identify action, feedback, and termination. Run <a href="play/">Feedback loop (3 epochs)</a>; remove <code>max=3</code> and Analyze. Explain which of <a href="#loops">the goal-loop rungs</a> owns the completion check.</p></li>
+        <li class="start-rung"><h3>Survive or fan out</h3><p><strong>Capstone:</strong> choose <a href="play/">Durable recovery</a> or <a href="play/">Parallel fan-out with join</a>. Predict the trace, remove <code>Ck</code> or <code>Mg</code>, and explain the failure using the <a href="#groups">Recovery pack</a> or <a href="#complexes">coordination layer</a>. Then modify the task input and rerun it.</p></li>
+      </ol>
     </section>
 
     <section class="appendix" id="appendix">
