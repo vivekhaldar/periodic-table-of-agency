@@ -87,6 +87,10 @@
     .remember input { width: auto; }
     .privacy { margin: .8rem 0 0; padding: .7rem .8rem; border: 1px dashed var(--line); font: 400 .7rem/1.55 var(--mono); color: var(--dim); }
     .privacy strong { color: var(--amber); font-weight: 600; }
+    .execution-status, .key-status { margin: .45rem 0 0; font: 500 .66rem/1.5 var(--mono); color: var(--dim); }
+    .execution-status strong, .key-status strong { color: var(--ink); }
+    .execution-status[data-level="parseable"] strong { color: var(--amber); }
+    .execution-status[data-level="conventional"] strong { color: var(--green); }
 
     .tabs { display: flex; flex-wrap: wrap; gap: .4rem; margin-bottom: .8rem; }
     .tab { padding: .5rem .8rem; border: 1px solid var(--line); background: transparent; color: var(--dim); font: 600 .66rem var(--mono); letter-spacing: .08em; text-transform: uppercase; }
@@ -150,7 +154,7 @@
     <section class="hero">
       <p class="kicker">Agent Algebra playground · powered by the agent-algebra runtime</p>
       <h1>Run the <em>algebra.</em></h1>
-      <p class="lede">Type a formula. The same notation you saw on the field chart compiles to a <strong>typed graph IR</strong>, gets linted against the stability laws, simulates offline — and <strong>runs against a real model</strong> through a durable, evidence-gated runtime. Analysis is free and happens entirely in your browser. Running costs tokens: <strong>bring your own API key.</strong></p>
+      <p class="lede">Type a formula and the playground will parse, canonicalize, lint, and attempt a conventional lowering to <strong>typed graph IR</strong>. Lowered programs can simulate offline; their model-backed atoms can <strong>call a real model</strong>. Lint, policy, and runtime checks still apply, and external tool variants need real host bindings beyond this teaching runner. Analysis is free and local. Running model calls costs tokens: <strong>bring your own API key.</strong></p>
     </section>
 
     <div class="work">
@@ -159,6 +163,7 @@
           <h2>Formula / agent file</h2>
           <label for="preset">Load an example</label>
           <select id="preset"></select>
+          <p class="execution-status" id="execution-status" aria-live="polite"></p>
           <label for="source">Source — a bare formula or a full .ag file with YAML front matter</label>
           <textarea id="source" spellcheck="false"></textarea>
           <div class="palette" id="palette" aria-label="Insert notation glyph"></div>
@@ -201,7 +206,8 @@
             <button class="btn sub" id="clear-key">Clear</button>
           </div>
           <label class="remember"><input type="checkbox" id="remember-key"> keep in this tab only (sessionStorage)</label>
-          <p class="privacy"><strong>Where your key goes:</strong> straight from this page to the provider's API, nowhere else. This is a static page — there is no backend, no proxy, no logging. Requests and token costs are yours. Analysis never needs a key.</p>
+          <p class="key-status" id="key-storage-status" aria-live="polite"></p>
+          <p class="privacy"><strong>Key trust boundary:</strong> Run sends the key from the currently served JavaScript page to <code>https://api.anthropic.com</code> when Anthropic is selected, or to the exact OpenAI-compatible Base URL you enter. There is no application backend or proxy, but you are trusting this page, its repository, and the deployment account. Use a scoped, revocable, low-limit key created for this playground; keep storage off unless needed; clear it afterward. For higher trust, serve a reviewed local checkout. Analysis never needs a key. A strict <code>connect-src</code> allowlist cannot cover arbitrary custom endpoints, so this GitHub Pages deployment does not treat CSP as the key boundary.</p>
         </div>
       </div>
 
@@ -229,6 +235,16 @@
     import * as AA from './agent-algebra-playground.js';
 
     /* ---------------- presets ---------------- */
+    const EXECUTION_LEVELS = {
+      parseable: {
+        label: 'Parseable · Analyze only',
+        detail: 'Accepted for structural analysis, but this published example has no complete conventional lowering.',
+      },
+      conventional: {
+        label: 'Conventionally executable',
+        detail: 'Lowers through bounded reference defaults. Lint, policy, and runtime checks still apply; external tool variants may need host bindings.',
+      },
+    };
     const PRESETS = [
       { group: 'Start here', name: 'Reliable tool call (the first compound)', source: `---
 name: reliable-tool
@@ -497,13 +513,23 @@ nodes:
     prompt: Critique the launch proposal. Distinguish strengths, risks, and concrete improvements.
 ---
 Sy → Cr → Sc → Sp` },
-      { group: 'Analyze only (for now)', name: 'Coding agent (field chart M-03)', source: `Rt[skill] + Rt[code] → Pl → Lp → Tl[code] ⊨! Vf[test] ↺ Lp[retry]` },
-      { group: 'Analyze only (for now)', name: 'Orchestrator–workers complex (C-01)', source: `Pl → Dc → Dl ⇉ {Worker} + {Worker} + {Worker} → Mg → Sc ⊨ Vf ⊣ Sp` },
-      { group: 'Analyze only (for now)', name: 'Lint teacher — break the stability laws', source: `# AA101: a tool with no Observe. AA102: a loop with no Stop.
+      { group: 'Field-chart & lint examples', name: 'Coding agent (field chart M-03)', source: `Rt[skill] + Rt[code] → Pl → Lp → Tl[code] ⊨! Vf[test] ↺ Lp[retry]` },
+      { group: 'Field-chart & lint examples', name: 'Orchestrator–workers complex (C-01)', source: `Pl → Dc → Dl ⇉ {Worker} + {Worker} + {Worker} → Mg → Sc ⊨ Vf ⊣ Sp` },
+      { group: 'Field-chart & lint examples', name: 'Lint teacher — break the stability laws', source: `# AA101: a tool with no Observe. AA102: a loop with no Stop.
 Sy → Lp → Tl[api]` },
     ];
 
     const preset = document.querySelector('#preset');
+    const source = document.querySelector('#source');
+    const inputOverride = document.querySelector('#input-override');
+    const runBtn = document.querySelector('#run-btn');
+    const executionStatus = document.querySelector('#execution-status');
+    const presetLevel = () => 'conventional';
+    function setExecutionStatus(level, detail = EXECUTION_LEVELS[level].detail) {
+      const current = EXECUTION_LEVELS[level];
+      executionStatus.dataset.level = level;
+      executionStatus.innerHTML = `<strong>${current.label}</strong> — ${detail}`;
+    }
     let currentGroup = null;
     let groupEl = null;
     PRESETS.forEach((item, index) => {
@@ -515,18 +541,23 @@ Sy → Lp → Tl[api]` },
       }
       const option = document.createElement('option');
       option.value = String(index);
-      option.textContent = item.name;
+      option.textContent = `${item.name} · ${EXECUTION_LEVELS[presetLevel(item)].label}`;
       groupEl.appendChild(option);
     });
 
-    const source = document.querySelector('#source');
-    const inputOverride = document.querySelector('#input-override');
     preset.addEventListener('change', () => {
-      source.value = PRESETS[Number(preset.value)].source;
+      const item = PRESETS[Number(preset.value)];
+      source.value = item.source;
       inputOverride.value = '';
+      setExecutionStatus(presetLevel(item));
     });
     source.value = PRESETS[2].source; // enforced evidence gate
     preset.value = '2';
+    setExecutionStatus(presetLevel(PRESETS[2]));
+    source.addEventListener('input', () => {
+      executionStatus.dataset.level = '';
+      executionStatus.innerHTML = '<strong>Edited · not yet classified</strong> — Analyze to confirm whether this source has a conventional executable lowering.';
+    });
 
     /* ---------------- glyph palette ---------------- */
     const glyphs = ['→','↺','⊣','⊨','—','⇉','+','[',']','{','}','~','!'];
@@ -551,6 +582,13 @@ Sy → Lp → Tl[api]` },
     const modelCustom = document.querySelector('#model-custom');
     const apiKeyInput = document.querySelector('#api-key');
     const rememberKey = document.querySelector('#remember-key');
+    const keyStorageStatus = document.querySelector('#key-storage-status');
+
+    function updateKeyStorageStatus() {
+      const hasKey = Boolean(apiKeyInput.value);
+      const storage = rememberKey.checked ? 'sessionStorage for this tab' : 'page memory only';
+      keyStorageStatus.innerHTML = `<strong>Key state:</strong> ${hasKey ? 'a key is entered' : 'no key entered'} · ${storage}.`;
+    }
 
     providerSelect.addEventListener('change', () => {
       document.querySelector('#anthropic-config').style.display = providerSelect.value === 'anthropic' ? '' : 'none';
@@ -563,16 +601,20 @@ Sy → Lp → Tl[api]` },
     if (storedKey) { apiKeyInput.value = storedKey; rememberKey.checked = true; }
     apiKeyInput.addEventListener('input', () => {
       if (rememberKey.checked) sessionStorage.setItem('aa-play-key', apiKeyInput.value);
+      updateKeyStorageStatus();
     });
     rememberKey.addEventListener('change', () => {
       if (rememberKey.checked) sessionStorage.setItem('aa-play-key', apiKeyInput.value);
       else sessionStorage.removeItem('aa-play-key');
+      updateKeyStorageStatus();
     });
     document.querySelector('#clear-key').addEventListener('click', () => {
       apiKeyInput.value = '';
       sessionStorage.removeItem('aa-play-key');
       rememberKey.checked = false;
+      updateKeyStorageStatus();
     });
+    updateKeyStorageStatus();
 
     function providerConfig() {
       if (providerSelect.value === 'openai-compatible') {
@@ -714,15 +756,21 @@ Sy → Lp → Tl[api]` },
         renderAnalysis(result);
         renderIr(result);
         renderSimulation(result);
+        if (result.executable) {
+          setExecutionStatus('conventional');
+        } else {
+          setExecutionStatus('parseable', `Analyze works, but Run is unavailable: ${escapeHtml(result.executableError ?? 'no conventional lowering')}.`);
+        }
         selectTab('panel-analysis');
       } catch (error) {
         document.querySelector('#panel-analysis').innerHTML = `<div class="err">${escapeHtml(error.message ?? String(error))}</div>`;
+        executionStatus.dataset.level = 'parseable';
+        executionStatus.innerHTML = `<strong>Not parseable</strong> — fix the analysis error before Run is available.`;
         selectTab('panel-analysis');
       }
     });
 
     /* ---------------- run ---------------- */
-    const runBtn = document.querySelector('#run-btn');
     runBtn.addEventListener('click', async () => {
       const config = providerConfig();
       const runPanel = document.querySelector('#panel-run');

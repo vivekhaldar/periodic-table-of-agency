@@ -129,6 +129,17 @@
     .run-callout-lede { max-width: 56ch; margin: 0; font: 400 1rem/1.45 var(--serif); opacity: .85; }
     .run-callout-cta { justify-self: start; padding: .8rem 1.1rem; border: 2px solid var(--bg); font: 600 .74rem var(--mono); letter-spacing: .1em; text-transform: uppercase; white-space: nowrap; }
     @media (min-width: 760px) { .run-callout { grid-template-columns: 1fr auto; } .run-callout-cta { justify-self: end; } }
+    .start-path { margin-bottom: clamp(2.5rem, 5vw, 4.5rem); padding: clamp(1.2rem, 3vw, 2rem); border: 1px solid var(--line); background: var(--panel); }
+    .start-path h2 { margin-bottom: .6rem; font: 700 clamp(2rem, 5vw, 3.3rem)/.95 var(--display); text-transform: uppercase; letter-spacing: .02em; }
+    .start-path > p { max-width: 72ch; margin: 0 0 1.4rem; color: var(--dim); }
+    .start-rungs { display: grid; gap: .7rem; list-style: none; margin: 0; padding: 0; counter-reset: start-rung; }
+    .start-rung { padding: 1rem; border: 1px solid var(--line-soft); counter-increment: start-rung; }
+    .start-rung h3 { margin: 0 0 .45rem; font: 700 1.25rem var(--display); text-transform: uppercase; letter-spacing: .03em; }
+    .start-rung h3::before { content: counter(start-rung, decimal-leading-zero) " · "; color: var(--amber); }
+    .start-rung p { margin: .35rem 0 0; font-size: .92rem; color: var(--dim); }
+    .start-rung strong { color: var(--ink); font-weight: 600; }
+    .start-rung a { color: var(--amber); }
+    @media (min-width: 760px) { .start-rungs { grid-template-columns: repeat(2, minmax(0, 1fr)); } .start-rung:last-child { grid-column: 1 / -1; } }
     .thesis { display: grid; gap: 0; border-block: 1px solid var(--line); }
     .thesis-item { padding: 1.4rem 0; border-bottom: 1px solid var(--line-soft); }
     .thesis-item:last-child { border-bottom: 0; }
@@ -294,6 +305,9 @@
     .molecule { position: relative; min-width: 0; padding: 1.4rem; border: 1px solid var(--line); background: var(--panel); }
     .molecule-index { position: absolute; top: .85rem; right: .9rem; font: 500 .64rem var(--mono); letter-spacing: .1em; color: var(--dim); }
     .molecule-kind { margin-bottom: .3rem; font: 600 .62rem var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--amber); }
+    .execution-level { display: inline-flex; align-items: center; min-height: 1.55rem; margin: 0 0 .7rem; padding: .25rem .45rem; border: 1px solid var(--line); color: var(--dim); font: 600 .58rem var(--mono); letter-spacing: .08em; text-transform: uppercase; }
+    .execution-level[data-level="conventional"] { border-color: var(--f-feedback); color: var(--f-feedback); }
+    .execution-level[data-level="parseable"] { border-color: var(--amber); color: var(--amber); }
     .molecule h3 { max-width: 16ch; margin-bottom: 1.1rem; font: 700 clamp(1.8rem, 5vw, 2.7rem)/.92 var(--display); text-transform: uppercase; letter-spacing: .02em; }
     .molecule p { max-width: 60ch; margin-bottom: 0; font-size: .98rem; line-height: 1.5; color: var(--dim); }
     .molecule .warning { margin-top: 1rem; padding-top: .9rem; border-top: 1px dashed var(--line); font: 500 .74rem/1.5 var(--mono); color: var(--ink); }
@@ -410,10 +424,10 @@
   </style>
 </head>
 <body>
-  <a class="skip-link" href="#main">Skip to the periodic table</a>
+  <a class="skip-link" href="#main">Skip to main content</a>
   <header class="shell masthead">
     <a class="brand" href="#top" aria-label="The Periodic Table of Agency home"><span class="brand-mark">Ag</span><span>Periodic Table<br>of Agency</span></a>
-    <nav aria-label="Page sections"><a href="#table">Atoms</a><a href="#bonds">Bonds</a><a href="#groups">Groups</a><a href="#molecules">Compounds</a><a href="#loops">Loops</a><a href="#complexes">Complexes</a><a href="#appendix">Appendix</a></nav>
+    <nav aria-label="Page sections"><a href="#start">Start here</a><a href="#table">Atoms</a><a href="#bonds">Bonds</a><a href="#groups">Groups</a><a href="#molecules">Compounds</a><a href="#loops">Loops</a><a href="#complexes">Complexes</a><a href="#appendix">Appendix</a></nav>
     <span class="status" aria-hidden="true">Rev 0.6 · Nominal</span>
   </header>
 
@@ -439,9 +453,9 @@
     <div class="shell">
       <a class="run-callout" href="play/">
         <div class="run-callout-copy">
-          <p class="run-callout-kicker">New · this notation is executable</p>
+          <p class="run-callout-kicker">New · analyze the notation, run bounded programs</p>
           <p class="run-callout-title">Do you actually want to <em>run</em> this??</p>
-          <p class="run-callout-lede">Every formula below compiles to a typed graph and executes against a real model — enforced gates, loops, traces and all. Open the playground, paste a formula, bring your own API key.</p>
+          <p class="run-callout-lede">The playground parses and lints this notation. Programs with a conventional lowering can execute the reference bindings, and their model-backed steps can call a real model. External tools still need real host bindings; schematic constructs remain reference-only or analysis-only.</p>
         </div>
         <span class="run-callout-cta">Open the playground&nbsp;→</span>
       </a>
@@ -454,12 +468,25 @@
       <div class="thesis-item"><span class="thesis-label">Complex</span><p>Several agent molecules coordinated by an orchestrator, protocol, or shared environment.</p></div>
     </div>
 
+    <section class="shell start-path" id="start" aria-labelledby="start-title">
+      <p class="kicker">Beginner route · about 60–90 minutes</p>
+      <h2 id="start-title">Build one guarantee at a time</h2>
+      <p>For software engineers who can read a small control-flow diagram; no agent framework experience is required. Analysis is free and offline. A live Run needs a scoped API key. On each rung: predict first, load the named playground preset, run or analyze it, break one invariant, and explain the result.</p>
+      <ol class="start-rungs">
+        <li class="start-rung"><h3>One model-backed operation</h3><p><strong>Learn:</strong> distinguish a model operation from the surrounding harness. In <a href="play/">Minimal writer — 3 model calls</a>, predict the call order. Then remove <code>Sp</code>. Does the formula still say when work is complete?</p></li>
+        <li class="start-rung"><h3>Act, observe, verify</h3><p><strong>Learn:</strong> explain why attempted action is not evidence. Load <a href="play/">Reliable tool call</a>, then remove <code>Ob</code> and Analyze. Connect the diagnostic to <a href="#bonds">evidence and gate bonds</a>.</p></li>
+        <li class="start-rung"><h3>Enforce the evidence gate</h3><p><strong>Learn:</strong> distinguish advisory from enforced bonds. Compare the enforced and advisory gate presets. Change <code>!</code> to <code>~</code>, predict whether failure blocks Stop, and check against <a href="#bonds">stability law 03</a>.</p></li>
+        <li class="start-rung"><h3>Bound feedback</h3><p><strong>Learn:</strong> identify action, feedback, and termination. Run <a href="play/">Feedback loop (3 epochs)</a>; remove <code>max=3</code> and Analyze. Explain which of <a href="#loops">the goal-loop rungs</a> owns the completion check.</p></li>
+        <li class="start-rung"><h3>Survive or fan out</h3><p><strong>Capstone:</strong> choose <a href="play/">Durable recovery</a> or <a href="play/">Parallel fan-out with join</a>. Predict the trace, remove <code>Ck</code> or <code>Mg</code>, and explain the failure using the <a href="#groups">Recovery pack</a> or <a href="#complexes">coordination layer</a>. Then modify the task input and rerun it.</p></li>
+      </ol>
+    </section>
+
     <section id="table">
       <div class="shell">
         <p class="sheet-tag">Sht 01 — The atoms <small>· 29 squares</small></p>
         <div class="section-head">
           <h2>29 elements, seven behavioral families</h2>
-          <p class="section-intro">Families group atoms by the job they perform, and <strong>position encodes reach</strong>: moving right within a row widens an atom’s control radius; moving down the table lengthens the time horizon it governs. Tap an element for its definition, likely bonds, and a route into the Harness Course or a canonical reading.</p>
+          <p class="section-intro">Families group atoms by the job they perform. The arrangement uses <strong>editorial tendencies, not semantic coordinates</strong>: nearby squares often have similar reach or time horizon, but row and column do not define an operational score. Tap an element for its definition, likely bonds, and a route into the Harness Course or a canonical reading.</p>
         </div>
         <div class="filter-bar" role="toolbar" aria-label="Filter atom families">
           <button class="filter" data-filter="all" aria-pressed="true">All · 29</button>
@@ -473,7 +500,7 @@
         </div>
         <p class="filter-status" id="filter-status"><span>Showing the full periodic arrangement.</span><strong>29 elements</strong></p>
         <div class="periodic-grid" id="periodic-grid" aria-label="Periodic table"></div>
-        <p class="grid-axes" aria-label="How to read the table's position"><span><strong>→</strong> Across a row: wider control radius</span><span><strong>↓</strong> Down the table: longer time horizons</span></p>
+        <p class="grid-axes" aria-label="How to read the table's editorial arrangement"><span><strong>→</strong> Across a row: loosely grouped by reach</span><span><strong>↓</strong> Down the table: loosely grouped by horizon</span></p>
         <aside class="element-detail" id="element-detail" aria-live="polite"></aside>
         <div class="legend" aria-label="Family legend">
           <span class="legend-item family-elicitation"><span class="swatch"></span>Elicitation</span>
@@ -555,7 +582,8 @@
             <li>Brackets specialize an atom without minting a new one: <code>Cn[schema]</code> is Constrain applied to output shape.</li>
             <li>Glyphs between squares are bonds. <code>+</code> means together—both present, no order implied.</li>
             <li><code>~</code> marks an advisory bond (a prompt asks); <code>!</code> marks an enforced bond (the harness refuses to proceed without it); unmarked bonds are coded.</li>
-            <li>Formulas are schematic sketches read left to right—a map of what bonds to what, not an executable grammar.</li>
+            <li>Execution labels are explicit: <strong>Schematic</strong> communicates design intent; <strong>Parseable</strong> is accepted for formatting and linting; <strong>Conventionally executable</strong> can lower through bounded reference defaults; <strong>Explicitly linked</strong> also supplies complete semantics and deployment bindings. A conventional lowering is not proof that every external tool variant has a production binding.</li>
+            <li>The field-chart cards remain design maps unless their label says otherwise. A parser accepting a formula does not promise that abstract composites such as <code>{Worker}</code> can run.</li>
           </ul>
         </aside>
         <div class="formula-key" aria-label="Bond notation key">
@@ -573,7 +601,7 @@
           <p class="section-intro">A goal decomposes into <strong>a target (Sy), a per-epoch check, and a stop discipline</strong> — a hard cap plus an explicit exhaustion policy. Every goal-seeking harness that works has all three; every one that runs away is missing one. The ladder below is ordered by <strong>who holds the check</strong> — nobody, the model itself, an independent judge — which is the bond-strength story again, applied to loops.</p>
         </div>
         <div class="complex-list" id="loop-ladder"></div>
-        <p class="chemistry-note"><strong>The runtime honors all of this:</strong> a <code>done</code> flag in the fed-back value exits the loop early, a passing verdict from a judge does the same, <code>max</code> caps the epochs, and <code>exhausted=emit-best</code> defines the consolation prize. Where consequence is high, the exit graduates once more — to an enforced verifier gate the harness holds, as in the coding agent's <code>Tl[code] ⊨! Vf[test] ↺ Lp[retry]</code>. All three rungs run live in <a href="play/">the playground</a>.</p>
+        <p class="chemistry-note"><strong>The runtime honors the two bounded examples:</strong> a <code>done</code> flag in the fed-back value exits the goal loop early, a passing verdict from a judge does the same, <code>max</code> caps the epochs, and <code>exhausted=emit-best</code> defines the consolation prize. The naive rung can be lowered, but the linter rejects it; Analyze is the intended lesson, not a claim that the unsafe plan is a valid agent. Where consequence is high, the exit graduates once more—to an enforced verifier gate the harness holds, as in the coding-agent formula <code>Tl[code] ⊨! Vf[test] ↺ Lp[retry]</code>. Its conventional lowering still needs a real code-tool binding before it becomes a coding agent. Load all three from <a href="play/">the playground</a>.</p>
       </div>
     </section>
 
@@ -631,7 +659,7 @@
           <h3>What changed in v0.5–0.6</h3>
           <p><strong>Three atoms earned squares.</strong> The v0.4 table could not write a scheduler, a clarifying question, or a reduce step. <code>Wt</code> Wait covers suspending until a time, event, or condition—the move behind cron triggers, wakeups, and durable execution. <code>Ak</code> Ask covers eliciting missing information or a decision from a human, which is neither Approve (a gate) nor a Tool side effect. <code>Mg</code> Merge covers combining parallel results into one artifact—Branch fans out and Score ranks, but neither synthesizes.</p>
           <p><strong>Three atoms moved.</strong> Trace joined Feedback: it records signals rather than setting policy. Checkpoint and Rollback joined Wait in the new Durability family, because surviving time, interruption, and failure is a different job from drawing boundaries. Governance now holds only true boundary-setters: Permission, Sandbox, Approve, Budget.</p>
-          <p><strong>Bonds gained strength.</strong> Topology alone under-determines behavior, so formulas now mark each load-bearing bond as advisory (<code>~</code>), coded (unmarked), or enforced (<code>!</code>). And position now carries meaning: within a row, control radius widens to the right; down the table, time horizons lengthen.</p>
+          <p><strong>Bonds gained strength.</strong> Topology alone under-determines behavior, so formulas now mark each load-bearing bond as advisory (<code>~</code>), coded (unmarked), or enforced (<code>!</code>). The table arrangement provides an editorial visual rhythm: reach and time horizon are approximate tendencies, not scored axes or semantic laws. Future revisions should preserve family grouping and record any ambiguous placement rather than infer guarantees from coordinates.</p>
           <p><strong>Atoms became orthogonal by test, not by vibe.</strong> Every element now states the one question it answers—Dispatch: “what handles the next step?” (control stays in the same context); Delegate: “hand this to another agent?” (a new context, always). Plan is the operator; the plan it produces is an artifact stored via <code>Xt[plan]</code>. Persist stores information; Checkpoint stores a restart point for the run itself.</p>
         </div>
       </div>
@@ -918,12 +946,35 @@
       return token.includes(':') ? `${token.split(':')[0]}[${token.split(':')[1]}]` : token;
     };
 
+    const executionLevels = {
+      schematic: ['Schematic', 'Design intent only; this card is not asserting parser or runtime support.'],
+      parseable: ['Parseable · Analyze only', 'The parser can format and lint this shape, but the reference runtime has no complete conventional lowering for it.'],
+      conventional: ['Conventionally executable', 'A corresponding playground program lowers through bounded reference defaults. Lint, policy, and runtime checks still apply, and external tools may require host bindings.'],
+      linked: ['Explicitly linked', 'The program supplies complete semantics and deployment bindings rather than relying on reference defaults.']
+    };
+    const executionByName = {
+      'Reliable tool call': 'conventional',
+      'Coding agent': 'conventional',
+      'The naive loop': 'parseable',
+      'The goal loop': 'conventional',
+      'The judged loop': 'conventional',
+      'Orchestrator–workers': 'conventional',
+      'Generator–judge panel': 'parseable',
+      'Specialist pipeline': 'parseable',
+      'Shared-state ecosystem': 'parseable'
+    };
+    function executionBadge(name) {
+      const level = executionByName[name] ?? 'schematic';
+      const [label, description] = executionLevels[level];
+      return `<span class="execution-level" data-level="${level}" title="${esc(description)}" aria-label="Execution level: ${esc(label)}. ${esc(description)}">${label}</span>`;
+    }
+
     const groupList = document.querySelector('#group-list');
     functionalGroups.forEach((group, index) => {
       const article = document.createElement('article');
       article.className = 'functional-group';
       const label = group.notation.map(displayToken).join(' ');
-      article.innerHTML = `<span class="group-id">FG-${String(index + 1).padStart(2,'0')}</span><div class="formula formula--compact" aria-label="Bond formula: ${esc(label)}">${renderNotation([group.notation], true)}</div><h3>${group.name}</h3><p>${group.desc}</p>`;
+      article.innerHTML = `<span class="group-id">FG-${String(index + 1).padStart(2,'0')}</span>${executionBadge(group.name)}<div class="formula formula--compact" aria-label="Bond formula: ${esc(label)}">${renderNotation([group.notation], true)}</div><h3>${group.name}</h3><p>${group.desc}</p>`;
       groupList.appendChild(article);
     });
 
@@ -932,7 +983,7 @@
       const article = document.createElement('article');
       article.className = 'molecule';
       const formulaLabel = molecule.notation.map(row => row.map(displayToken).join(' ')).join('; ');
-      article.innerHTML = `<span class="molecule-index">M-${String(index + 1).padStart(2,'0')}</span><p class="molecule-kind">${molecule.kind}</p><h3>${molecule.name}</h3><div class="formula" aria-label="Bond formula: ${esc(formulaLabel)}">${renderNotation(molecule.notation)}</div><p>${molecule.desc}</p><p class="warning">${molecule.warning}</p>`;
+      article.innerHTML = `<span class="molecule-index">M-${String(index + 1).padStart(2,'0')}</span><p class="molecule-kind">${molecule.kind}</p>${executionBadge(molecule.name)}<h3>${molecule.name}</h3><div class="formula" aria-label="Bond formula: ${esc(formulaLabel)}">${renderNotation(molecule.notation)}</div><p>${molecule.desc}</p><p class="warning">${molecule.warning}</p>`;
       moleculeList.appendChild(article);
     });
 
@@ -946,7 +997,7 @@
       const article = document.createElement('article');
       article.className = 'molecule';
       const formulaLabel = rung.notation.map(row => row.map(displayToken).join(' ')).join('; ');
-      article.innerHTML = `<span class="molecule-index">L-${String(index + 1).padStart(2,'0')}</span><p class="molecule-kind">${rung.kind}</p><h3>${rung.name}</h3><div class="formula" aria-label="Bond formula: ${esc(formulaLabel)}">${renderNotation(rung.notation)}</div><p>${rung.desc}</p><p class="warning">${rung.warning}</p>`;
+      article.innerHTML = `<span class="molecule-index">L-${String(index + 1).padStart(2,'0')}</span><p class="molecule-kind">${rung.kind}</p>${executionBadge(rung.name)}<h3>${rung.name}</h3><div class="formula" aria-label="Bond formula: ${esc(formulaLabel)}">${renderNotation(rung.notation)}</div><p>${rung.desc}</p><p class="warning">${rung.warning}</p>`;
       loopLadder.appendChild(article);
     });
 
@@ -955,7 +1006,7 @@
       const article = document.createElement('article');
       article.className = 'molecule';
       const formulaLabel = complex.notation.map(row => row.map(displayToken).join(' ')).join('; ');
-      article.innerHTML = `<span class="molecule-index">C-${String(index + 1).padStart(2,'0')}</span><p class="molecule-kind">${complex.kind}</p><h3>${complex.name}</h3><div class="formula" aria-label="Bond formula: ${esc(formulaLabel)}">${renderNotation(complex.notation)}</div><p>${complex.desc}</p><p class="wild">${complex.wild}</p><p class="warning">${complex.warning}</p>`;
+      article.innerHTML = `<span class="molecule-index">C-${String(index + 1).padStart(2,'0')}</span><p class="molecule-kind">${complex.kind}</p>${executionBadge(complex.name)}<h3>${complex.name}</h3><div class="formula" aria-label="Bond formula: ${esc(formulaLabel)}">${renderNotation(complex.notation)}</div><p>${complex.desc}</p><p class="wild">${complex.wild}</p><p class="warning">${complex.warning}</p>`;
       complexList.appendChild(article);
     });
 

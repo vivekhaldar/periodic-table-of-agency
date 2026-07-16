@@ -16147,14 +16147,31 @@ var SystemClock = class {
     return Date.now();
   }
   async sleep(ms, signal) {
+    if (signal?.aborted)
+      throw signal.reason ?? new Error("Aborted");
     if (ms <= 0)
       return;
     await new Promise((resolve2, reject) => {
-      const timer = setTimeout(resolve2, ms);
-      signal?.addEventListener("abort", () => {
+      let settled = false;
+      const onComplete = () => {
+        if (settled)
+          return;
+        settled = true;
+        signal?.removeEventListener("abort", onAbort);
+        resolve2();
+      };
+      const timer = setTimeout(onComplete, ms);
+      const onAbort = () => {
+        if (settled)
+          return;
+        settled = true;
         clearTimeout(timer);
-        reject(signal.reason ?? new Error("Aborted"));
-      }, { once: true });
+        signal?.removeEventListener("abort", onAbort);
+        reject(signal?.reason ?? new Error("Aborted"));
+      };
+      signal?.addEventListener("abort", onAbort, { once: true });
+      if (signal?.aborted)
+        onAbort();
     });
   }
 };
@@ -18592,6 +18609,23 @@ function defaultModelNodeDefinition(symbol) {
   };
 }
 
+// examples/required-field.mjs
+init_buffer();
+var unsafePathSegments = /* @__PURE__ */ new Set(["__proto__", "prototype", "constructor"]);
+function hasRequiredField(value, path) {
+  if (!path) return value !== void 0 && value !== null;
+  let current = value;
+  for (const segment of String(path).split(".")) {
+    if (unsafePathSegments.has(segment) || !current || typeof current !== "object") {
+      return false;
+    }
+    const descriptor = Object.getOwnPropertyDescriptor(current, segment);
+    if (!descriptor || !("value" in descriptor)) return false;
+    current = descriptor.value;
+  }
+  return current !== void 0 && current !== null;
+}
+
 // playground/entry.mjs
 var operatorNames = Object.fromEntries(
   [...OPERATOR_DEFINITIONS].map(([symbol, definition]) => [symbol, definition.name])
@@ -18765,15 +18799,6 @@ function upstreamArtifact(prompt) {
   } catch {
     return void 0;
   }
-}
-function hasRequiredField(value, path) {
-  if (!path) return value !== void 0 && value !== null;
-  let current = value;
-  for (const segment of String(path).split(".")) {
-    if (!current || typeof current !== "object" || !(segment in current)) return false;
-    current = current[segment];
-  }
-  return current !== void 0 && current !== null;
 }
 function scoreVerdict(value, threshold) {
   const score = value && typeof value === "object" ? Number(value.score) : Number.NaN;
