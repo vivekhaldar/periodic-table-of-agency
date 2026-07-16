@@ -79,6 +79,6 @@ NODE
 
 Then verify the page at mobile and desktop widths, exercise every family filter, open several element details, and check the browser console for errors.
 
-## Status
+## License
 
-This is a private working repository for an evolving conceptual field chart. No public-use license is granted at this time.
+Licensed under the [Apache License 2.0](./LICENSE).
